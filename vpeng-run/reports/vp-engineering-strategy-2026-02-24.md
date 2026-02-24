@@ -12,14 +12,16 @@
 
 ### 1.1 Company Goal + Constraints
 
-**Goal**: Establish an AI agent reliability framework for production deployment that differentiates us in a crowded market.
+**Goal**: Evolve our existing Enkai AI feature-building platform into a production-grade AI agent reliability framework that differentiates us in a crowded market.
+
+**Current portfolio**: 31 GitHub repos (16 active), anchored by the **Enkai platform** (6 repos) — an AI-powered system that transforms GitHub issue specs into production-ready PRs via an automated pipeline (issue-manager → SQS → builder → PR). Supporting tools include frank (container runtime), pedro (skills framework), metis (dev toolkit), and template-factory (scaffolding) [15][17].
 
 **Constraints**:
 - Budget: $500K engineering spend for Q1
 - Team: 8 engineers (4 senior, 4 mid-level) — currently have 6, hiring 2 (1 ML/LLM specialist, 1 infra)
 - Timeline: MVP in 3 months
-- Company stage: Series B
-- Current stack: Python, TypeScript, AWS, PostgreSQL
+- Current stack: TypeScript (dominant, 12 repos), Python (8 repos, core agent logic), Go (frank container runtime), AWS CDK (30 infrastructure stacks), Next.js, FastAPI, ECS Fargate, DynamoDB, SQS, Bedrock AgentCore [15]
+- Technical debt: Schema drift across 3 repos, shared_types duplication, incomplete monorepo extraction, split CI/CD (GitHub Actions + CodeBuild + no CI) [16]
 
 ### 1.2 Market Signals (Cited)
 
@@ -49,11 +51,45 @@ Community patterns from agent practitioners reinforce our strategy:
 
 - **Quality gates should be self-healing with automated fix loops** before escalating to human intervention—incorporated into our eval framework design.
 
+### 1.4 Internal Platform Assessment
+
+An analysis of the tegryan-ddo GitHub organization (31 repos, 16 active) reveals a substantial existing platform that the strategy must build upon rather than start from scratch [15][16][17].
+
+**Enkai Platform Architecture (6 repos)**:
+
+The core pipeline is already operational: GitHub webhooks trigger `enkai-issue-manager`, which analyzes and decomposes issues, then dispatches jobs via SQS to `enkai-builder`. The builder — the largest Python codebase at 6.3MB — uses Bedrock AgentCore to generate code and create PRs. `enkai-monitor` provides a TypeScript dashboard, and `enkai-infra` manages all AWS resources through 30 CDK stacks (VPC, ECS, DynamoDB, SQS, S3, Route53, Cognito, IAM, secrets, logging, and more) [15].
+
+**Supporting Ecosystem (6 repos)**:
+
+- **frank** (Go): Container runtime managing ECS Fargate instances for AI coding agents with web UI and worktree isolation
+- **pedro** (Python): Skills framework providing 30+ reusable agent capabilities consumed by frank containers at startup
+- **metis** (TypeScript/Python): AI-powered dev toolkit for code analysis and quality checking
+- **template-factory** (TypeScript): Project scaffolding from templates, built on Pedro framework
+- **janus**: Planned deployment orchestration service (repo created but empty)
+- **brandassador** (TypeScript): Brand management tooling (18 open issues — most active backlog)
+
+**Key Strengths Discovered**:
+- Formal JSON Schema contracts for inter-service communication (9+ schemas in enkai-builder)
+- Comprehensive CDK infrastructure: 30 stacks in enkai-infra with tiered resource management
+- Bedrock AgentCore integration for AI agent orchestration
+- SQS-based async architecture providing natural backpressure and decoupling
+- Pedro skills ecosystem enabling reusable, composable agent capabilities
+
+**Key Risks Discovered** [16]:
+- **Schema drift**: JSON schemas defined independently in enkai, enkai-builder, and enkai-issue-manager with no shared registry or version management
+- **shared_types duplication**: Python type definitions copy-pasted between enkai-builder and enkai-issue-manager; changes require manual synchronization
+- **Incomplete monorepo extraction**: enkai still contains `infra/cdk` and `dashboard/` directories despite enkai-infra and enkai-monitor existing as separate repos — unclear which copy is authoritative
+- **Split CI/CD**: GitHub Actions in enkai (5 workflows), CodeBuild in enkai-issue-manager and enkai-infra, no CI in 7 active repos including enkai-builder
+- **Bus factor**: enkai-builder and enkai-issue-manager each have a single contributor
+- **Janus empty**: Deployment orchestration planned but not started
+
 ## 2) Current Strategy
 
 ### 2.1 North Star + Strategic Bets
 
 **North Star**: Build the most reliable AI agent platform in the market, where reliability is the primary differentiator.
+
+**Foundation**: These bets build upon the existing Enkai platform, which already implements the core agent pipeline (issue analysis → decomposition → code generation → PR creation) with 30 CDK infrastructure stacks and Bedrock AgentCore integration [15]. The strategic work is to harden this foundation into a production-grade, multi-tenant reliability platform.
 
 **Strategic Bets** (prioritized):
 
@@ -86,6 +122,18 @@ Community patterns from agent practitioners reinforce our strategy:
 ## 3) Technical Strategy
 
 ### 3.1 Platform Architecture
+
+**Current State vs. Target**: The Enkai platform already implements several components mapped to the target architecture below [15]:
+
+| Target Component | Current Implementation | Gap |
+|-----------------|----------------------|-----|
+| Agent Harness | enkai-builder (Bedrock AgentCore, lifecycle management) | Needs termination logic, self-verification, sandbox isolation |
+| Tool Registry | enkai-builder schemas/ (9+ JSON Schema contracts) | Needs centralized registry, version management |
+| Eval Engine | None | Full build required |
+| Trace Collector | enkai-monitor (basic dashboard) | Needs reasoning chain tracing, Langfuse integration |
+| LLM Gateway | None (direct Bedrock calls) | Full build required (Q2) |
+| Sandbox | frank (ECS Fargate containers, worktree isolation) | Needs gVisor/Firecracker for multi-tenant |
+| Orchestration | enkai-issue-manager → SQS → enkai-builder pipeline | Needs multi-agent coordination (Q3) |
 
 ```mermaid
 graph TB
@@ -247,15 +295,33 @@ graph TB
 - Verification cost ratio: <20% of total LLM spend
 - Per-request cost tracking and attribution
 
+### 3.6 Technical Debt & Migration Plan
+
+The internal platform assessment [16] identified five cross-cutting technical debt items that must be remediated to support the reliability strategy:
+
+| Debt Item | Current State | Target State | Owner | Timeline |
+|-----------|--------------|-------------|-------|----------|
+| **Schema Registry** | JSON schemas duplicated in enkai, enkai-builder, enkai-issue-manager (3 independent copies) | Single source of truth: publish schemas as a versioned npm/pip package from enkai-infra, consumed by all services | Infra team | Q1 (Weeks 3-6) |
+| **shared_types Extraction** | Python types copy-pasted between enkai-builder and enkai-issue-manager | Shared Python package in enkai-infra or standalone `enkai-types` repo; published to private PyPI | Backend team | Q1 (Weeks 4-6) |
+| **CI/CD Consolidation** | GitHub Actions in enkai, CodeBuild in 2 repos, no CI in 7 repos | All repos on self-hosted GitHub Actions (aligns with enkai-infra issue #31) | DevOps | Q1 (Weeks 2-8) |
+| **Monorepo Cleanup** | enkai retains `infra/cdk` and `dashboard/` despite enkai-infra and enkai-monitor existing | Remove duplicated directories from enkai; enkai-infra and enkai-monitor are authoritative | Backend team | Q1 (Weeks 2-4) |
+| **Test Coverage** | Unknown — no CI enforcing coverage in most repos | 70% line coverage floor enforced in CI for all platform repos | All teams | Q2 |
+
+**Dependency order**: Monorepo Cleanup → shared_types Extraction → Schema Registry → CI/CD Consolidation (CI must validate schemas and shared types).
+
 ## 4) 12-Month Roadmap
 
 ### Q1: Foundation (Weeks 1-12)
 
 | Milestone | Description | Team | Deliverable |
 |-----------|-------------|------|-------------|
-| **Agent Harness MVP** | Core runtime with termination conditions, rules-based verification, artifact persistence | 4 eng (2 backend, 1 ML, 1 infra) | Production-ready harness |
+| **Monorepo Cleanup** | Remove duplicate infra/cdk and dashboard/ from enkai; establish enkai-infra and enkai-monitor as authoritative [16] | 1 eng (backend, weeks 2-4) | Clean repo boundaries |
+| **shared_types Extraction** | Extract shared Python types into versioned package; eliminate copy-paste between builder and issue-manager [16] | 1 eng (backend, weeks 4-6) | `enkai-types` package |
+| **Schema Registry** | Publish JSON schemas as versioned package from enkai-infra; all services consume from single source [16] | 1 eng (infra, weeks 3-6) | Schema package + CI validation |
+| **CI/CD Consolidation** | Migrate all repos to self-hosted GitHub Actions (aligns with enkai-infra #31) [16] | 1 eng (DevOps, weeks 2-8) | Unified CI/CD across all repos |
+| **Agent Harness MVP** | Evolve enkai-builder into production harness with termination conditions, rules-based verification, artifact persistence | 4 eng (2 backend, 1 ML, 1 infra) | Production-ready harness |
 | **Eval Foundation** | Behavior taxonomy, golden datasets (500+), CI-integrated quality metrics | 3 eng (1 ML, 1 backend, 1 DevOps) | Eval engine + regression suite |
-| **Basic Tracing** | Lightweight trace collection, basic dashboards | 1 eng (infra) | Trace visibility |
+| **Basic Tracing** | Evolve enkai-monitor into trace collector with Langfuse integration | 1 eng (infra) | Trace visibility |
 | **Sandbox Security** | Threat model, gVisor integration, security review | (included in Harness) | Security spec + implementation |
 | **Cache Pilot** | Benchmark semantic caching on sample traffic | 1 eng (infra, weeks 6-8) | Pilot results + go/no-go |
 
@@ -265,6 +331,7 @@ graph TB
 
 | Milestone | Description | Team | Deliverable |
 |-----------|-------------|------|-------------|
+| **Test Coverage Floor** | Enforce 70% line coverage in CI for all platform repos [16] | All teams | Coverage gates in CI |
 | **LLM Gateway** | Model routing, semantic caching (if pilot validates), failover | 2 eng | Production gateway |
 | **Full Observability** | Reasoning chain viz, cost attribution, alert framework | 2 eng | Complete observability stack |
 | **Self-Verification V2** | LLM-based verification for high-stakes, confidence routing | 2 eng | Tiered verification live |
@@ -369,6 +436,10 @@ Reporting: All engineers report to VP Engineering with tech leads for each team 
 | **LLM provider pricing changes** | Medium | Medium | Multi-provider support; local model capability as hedge |
 | **Semantic caching doesn't achieve target hit rates** | Medium | Medium | Pilot before committing; gateway architecture works without caching |
 | **Enterprise sales cycle longer than expected** | Medium | Medium | Start pilot conversations Q2; focus on design partners who can move fast |
+| **Schema drift causes cross-service failures** [16] | High | High | Establish schema registry in Q1 (weeks 3-6); publish versioned schema package from enkai-infra; add schema validation to CI |
+| **shared_types divergence causes runtime errors** [16] | High | Medium | Extract shared_types into `enkai-types` package in Q1 (weeks 4-6); remove copy-pasted directories |
+| **Incomplete monorepo extraction causes confusion** [16] | Medium | Medium | Remove duplicate infra/cdk and dashboard/ from enkai in Q1 (weeks 2-4); document authoritative repo ownership |
+| **Bus factor on critical repos** [16] | Medium | High | Cross-train second engineer on enkai-builder and enkai-issue-manager by Week 8; require code review on all changes |
 
 ## 8) Decision Log
 
@@ -380,6 +451,7 @@ Reporting: All engineers report to VP Engineering with tech leads for each team 
 | DEC-004 | Defer Agent Marketplace to Year 2 | Platform must be validated before building ecosystem | Simple templates in Q4; Partner marketplace | Final |
 | DEC-005 | Use gVisor (dev) + Firecracker (prod) for sandbox | gVisor lighter for dev; Firecracker stronger for multi-tenant | Docker-only; Firecracker-only; Cloud Run | Provisional |
 | DEC-006 | Set cache hit rate target at 40% until pilot validates | Published 60-85% rates are for FAQ-style workloads; agent workloads may differ | Assume 60% target; Skip caching | Provisional |
+| DEC-007 | Complete monorepo-to-multirepo extraction in Q1; remediate schema drift and shared_types duplication before Q2 hardening | Internal assessment [16] identified cross-repo technical debt that undermines reliability goals. Must be addressed before adding new platform capabilities. | Defer to Q2; Accept duplication; Reconsolidate into monorepo | Final |
 
 ### Open Questions
 
@@ -420,6 +492,20 @@ Reporting: All engineers report to VP Engineering with tech leads for each team 
 9. Maxim. "Ensuring AI Agent Reliability in Production." https://www.getmaxim.ai/articles/ensuring-ai-agent-reliability-in-production/
 
 10. n8n Blog. "15 best practices for deploying AI agents in production." https://blog.n8n.io/best-practices-for-deploying-ai-agents-in-production/
+
+11. tegryan-ddo. "Enkai — AI Feature Builder." https://github.com/tegryan-ddo/enkai
+
+12. tegryan-ddo. "Enkai Infrastructure (30 CDK stacks)." https://github.com/tegryan-ddo/enkai-infra
+
+13. tegryan-ddo. "Enkai Builder — Autonomous PR generation." https://github.com/tegryan-ddo/enkai-builder
+
+14. tegryan-ddo. "Enkai Issue Manager — Issue analysis and dispatch." https://github.com/tegryan-ddo/enkai-issue-manager
+
+15. Internal. "tegryan-ddo GitHub Organization Repo Analysis — Enkai Platform." vpeng-run/evidence/repo-analysis.json
+
+16. Internal. "tegryan-ddo Cross-Repo Technical Debt Assessment." vpeng-run/evidence/repo-analysis.json#cross_repo_findings
+
+17. Internal. "tegryan-ddo Supporting Ecosystem Analysis." vpeng-run/evidence/repo-analysis.json#supporting_repos
 
 ---
 

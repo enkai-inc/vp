@@ -1,0 +1,453 @@
+{
+  "analysis_date": "2026-02-24",
+  "github_org": "tegryan-ddo",
+  "org_metrics": {
+    "total_repos": 31,
+    "active_repos_since_2026": 16,
+    "archived_repos": 6,
+    "empty_repos": 2,
+    "unique_contributors": 3,
+    "language_distribution": {
+      "TypeScript": "dominant (12 repos, largest codebases)",
+      "Python": "secondary (8 repos, primary for builder + issue-manager)",
+      "Go": "tertiary (frank container runtime, medibook)",
+      "JavaScript": "legacy (ez-order, ocean-escapes, stock-news-tracker)",
+      "Shell": "scripting (frank entrypoint, pedro scripts)"
+    },
+    "deployment_patterns": {
+      "primary": "AWS ECS Fargate via CDK",
+      "ci_cd_split": {
+        "github_actions": ["enkai"],
+        "codebuild": ["enkai-issue-manager", "enkai-infra"],
+        "none": ["enkai-builder", "enkai-monitor", "frank", "pedro", "metis"]
+      }
+    }
+  },
+  "platform_repos": {
+    "enkai": {
+      "url": "https://github.com/tegryan-ddo/enkai",
+      "description": "AI Feature Builder - Turn feature specs into small, reviewable PRs",
+      "role": "Main monorepo: CLI, dashboard, infra/cdk, schemas, lambda functions, Slack integration",
+      "primary_language": "TypeScript",
+      "languages_bytes": {
+        "TypeScript": 8346483,
+        "Python": 395658,
+        "Shell": 63028,
+        "JavaScript": 23398,
+        "Dockerfile": 7367,
+        "CSS": 7013,
+        "Makefile": 6167
+      },
+      "ci_cd": {
+        "type": "GitHub Actions",
+        "workflows": ["build-docker.yml", "deploy-cdk.yml", "deploy-ecs.yml", "e2e-smoke.yml", "test.yml"]
+      },
+      "top_level_dirs": [".claude", ".devcontainer", ".github", ".serena", "cli", "config", "dashboard", "docs", "infra", "lambda", "schemas", "scripts", "slack", "tests"],
+      "open_issues": 1,
+      "contributors": 2,
+      "created": "2025-12-17",
+      "last_push": "2026-02-23",
+      "size_kb": 28255,
+      "findings": [
+        "Still contains infra/cdk directory that overlaps with enkai-infra",
+        "Still contains dashboard directory that overlaps with enkai-monitor",
+        "Has schemas/ directory with schema definitions also found in satellites",
+        "5 GitHub Actions workflows — most mature CI/CD in the org"
+      ]
+    },
+    "enkai-infra": {
+      "url": "https://github.com/tegryan-ddo/enkai-infra",
+      "description": "Shared AWS infrastructure for the Enkai platform (VPC, ECS, DynamoDB, SQS, S3, Route53, Cognito)",
+      "role": "Centralized CDK infrastructure: 30 stacks covering all platform services",
+      "primary_language": "TypeScript",
+      "languages_bytes": {
+        "TypeScript": 690621,
+        "JavaScript": 506,
+        "Python": 1047
+      },
+      "ci_cd": {
+        "type": "CodeBuild",
+        "buildspec": true,
+        "github_actions": false
+      },
+      "cdk_stacks": [
+        "agentcore-lambda-stack", "agentcore-stack", "batch-inference-stack",
+        "builder-stack", "code-quality-gateway-stack", "dashboard-stack",
+        "deployment-pipeline-stack", "dns-auth-stack", "dynamodb-stack",
+        "ecs-cluster-stack", "enkai-infra-stack", "gateway-stack",
+        "iam-stack", "logging-stack", "lsp-stack",
+        "monitor-pipeline-stack", "monitor-stack", "networking-stack",
+        "pnyx-redis-stack", "preview-pipeline-stack", "preview-poller-stack",
+        "recurring-tasks-stack", "s3-stack", "sdlc-events-stack",
+        "sdlc-gateway-stack", "secrets-stack", "security-gateway-stack",
+        "shared-alb-stack", "sqs-stack", "webhook-router-stack"
+      ],
+      "cdk_stack_count": 30,
+      "open_issues": 3,
+      "key_issues": [
+        {"number": 36, "title": "Deploy shared infrastructure stacks to AWS"},
+        {"number": 35, "title": "Set up self-hosted GitHub Actions runner on MacBook"},
+        {"number": 31, "title": "[EPIC] Migrate from CodeBuild/CodePipeline to Self-Hosted GitHub Actions"}
+      ],
+      "contributors": 2,
+      "created": "2026-02-11",
+      "last_push": "2026-02-22",
+      "size_kb": 431,
+      "findings": [
+        "30 CDK stacks — comprehensive but high blast radius per deploy",
+        "CodeBuild CI/CD while enkai uses GitHub Actions (split CI/CD)",
+        "Issue #31 acknowledges need to migrate to GitHub Actions",
+        "Issue #36 indicates stacks not yet fully deployed"
+      ]
+    },
+    "enkai-builder": {
+      "url": "https://github.com/tegryan-ddo/enkai-builder",
+      "description": "Autonomous AI feature builder - transforms issue specs into production-ready PRs",
+      "role": "Core build agent: receives SQS jobs, executes code generation, creates PRs",
+      "primary_language": "Python",
+      "languages_bytes": {
+        "Python": 6342997,
+        "TypeScript": 101999,
+        "Shell": 29294,
+        "Dockerfile": 25339,
+        "JavaScript": 8247
+      },
+      "ci_cd": {
+        "type": "none",
+        "buildspec": false,
+        "github_actions": false
+      },
+      "schema_dirs": ["schemas/", "shared_types/"],
+      "schemas_found": [
+        "evidence.schema.json", "handoff.schema.json", "job.schema.json",
+        "result.schema.json", "workitem.schema.json",
+        "sdlc/contracts/dod.schema.json", "sdlc/contracts/dor.schema.json",
+        "sdlc/contracts/release.schema.json",
+        "stepfunctions/sdlc-pipeline.asl.json"
+      ],
+      "has_agentcore_integration": true,
+      "open_issues": 0,
+      "contributors": 1,
+      "created": "2026-02-11",
+      "last_push": "2026-02-11",
+      "size_kb": 1576,
+      "findings": [
+        "Largest Python codebase (6.3MB) — core business logic",
+        "Contains shared_types/ that duplicates code in enkai-issue-manager",
+        "Contains schemas/ with JSON Schema contracts (9+ schemas)",
+        "Has Bedrock AgentCore integration (agentcore/context/validation/schemas.py)",
+        "No CI/CD pipeline configured",
+        "Single contributor — bus factor risk"
+      ]
+    },
+    "enkai-issue-manager": {
+      "url": "https://github.com/tegryan-ddo/enkai-issue-manager",
+      "description": "AI-powered GitHub issue analysis, enrichment, decomposition, and job dispatch service",
+      "role": "Issue intake: analyzes GitHub issues, decomposes into work items, dispatches to SQS",
+      "primary_language": "Python",
+      "languages_bytes": {
+        "Python": 1823243,
+        "TypeScript": 7674,
+        "Dockerfile": 2118,
+        "Makefile": 1170
+      },
+      "ci_cd": {
+        "type": "CodeBuild",
+        "buildspec": true,
+        "github_actions": false
+      },
+      "schema_dirs": ["schemas/v1/", "shared_types/"],
+      "schemas_found": [
+        "v1/checkpoint.schema.json", "v1/issue_state.schema.json",
+        "v1/job_dispatch.schema.json", "v1/webhook_event.schema.json"
+      ],
+      "shared_types_files": [
+        "__init__.py", "github_app_auth.py", "multi_repo_types.py"
+      ],
+      "open_issues": 0,
+      "contributors": 1,
+      "created": "2026-02-11",
+      "last_push": "2026-02-11",
+      "size_kb": 449,
+      "findings": [
+        "Contains shared_types/ that duplicates code in enkai-builder",
+        "Contains schemas/v1/ with different schema set than enkai-builder",
+        "Uses CodeBuild while enkai uses GitHub Actions",
+        "Single contributor — bus factor risk"
+      ]
+    },
+    "enkai-monitor": {
+      "url": "https://github.com/tegryan-ddo/enkai-monitor",
+      "description": "Enkai monitoring application",
+      "role": "Dashboard and monitoring: platform health, build status, metrics",
+      "primary_language": "TypeScript",
+      "languages_bytes": {
+        "TypeScript": 583199,
+        "Python": 104930,
+        "JavaScript": 6658,
+        "Dockerfile": 1727,
+        "CSS": 308
+      },
+      "ci_cd": {
+        "type": "none",
+        "buildspec": false,
+        "github_actions": false
+      },
+      "open_issues": 0,
+      "contributors": 1,
+      "created": "2026-01-28",
+      "last_push": "2026-01-30",
+      "size_kb": 626,
+      "findings": [
+        "Overlaps with enkai monorepo's dashboard/ directory",
+        "No CI/CD pipeline configured",
+        "Not pushed since January — potentially stale"
+      ]
+    },
+    "enkai-nextjs-template": {
+      "url": "https://github.com/tegryan-ddo/enkai-nextjs-template",
+      "description": "Next.js template repository optimized for Enkai AI-powered development",
+      "role": "Project scaffolding: starter template for new Enkai-powered projects",
+      "primary_language": "TypeScript",
+      "languages_bytes": {
+        "TypeScript": 4586,
+        "JavaScript": 728
+      },
+      "ci_cd": {
+        "type": "none"
+      },
+      "open_issues": 0,
+      "contributors": 1,
+      "created": "2026-01-17",
+      "last_push": "2026-01-17",
+      "size_kb": 5,
+      "findings": [
+        "Minimal template — only 5KB",
+        "Not updated since creation"
+      ]
+    }
+  },
+  "supporting_repos": {
+    "frank": {
+      "url": "https://github.com/tegryan-ddo/frank",
+      "description": "Run Claude Code in containers with web UI, worktree isolation, and AWS ECS deployment",
+      "role": "Container runtime: ECS Fargate containers for AI coding agents with web UI",
+      "primary_language": "Go",
+      "languages_bytes": {
+        "Go": 216243,
+        "TypeScript": 122915,
+        "HTML": 137427,
+        "Python": 113684,
+        "Shell": 88305,
+        "PowerShell": 9317,
+        "Dockerfile": 4277,
+        "Makefile": 2795,
+        "JavaScript": 1027
+      },
+      "open_issues": 4,
+      "key_issues": [
+        {"number": 102, "title": "Community skills download fails due to pedro post-checkout hook"},
+        {"number": 101, "title": "Migrate from CodePipeline to GitHub Actions self-hosted runner"},
+        {"number": 100, "title": "Migrate to shared infrastructure (enkai-infra)"},
+        {"number": 90, "title": "AWS Cost Analysis - February 2025"}
+      ],
+      "contributors": 2,
+      "created": "2026-01-20",
+      "last_push": "2026-02-23",
+      "size_kb": 533,
+      "findings": [
+        "Multi-language (Go + TS + Python + Shell) — high maintenance surface",
+        "Issue #101 confirms need to migrate CI/CD to GitHub Actions",
+        "Issue #100 confirms planned migration to enkai-infra shared stacks",
+        "Actively maintained (last push yesterday)"
+      ]
+    },
+    "pedro": {
+      "url": "https://github.com/tegryan-ddo/pedro",
+      "description": "Community skills framework for AI coding agents",
+      "role": "Skills ecosystem: reusable skill definitions, hooks, and scripts for AI agents",
+      "primary_language": "Python",
+      "languages_bytes": {
+        "Python": 210579,
+        "Shell": 3986
+      },
+      "open_issues": 1,
+      "contributors": 2,
+      "created": "2026-01-20",
+      "last_push": "2026-02-22",
+      "size_kb": 614,
+      "findings": [
+        "Pure Python — clean dependency surface",
+        "Actively maintained",
+        "Skills are consumed by frank containers at startup"
+      ]
+    },
+    "metis": {
+      "url": "https://github.com/tegryan-ddo/metis",
+      "description": "AI-powered development toolkit built on the Pedro framework",
+      "role": "Dev toolkit: code analysis, quality checking, development automation",
+      "primary_language": "TypeScript",
+      "languages_bytes": {
+        "TypeScript": 476465,
+        "Python": 415434,
+        "Shell": 9024,
+        "Dockerfile": 6325,
+        "JavaScript": 5593,
+        "Jinja": 1223,
+        "CSS": 118
+      },
+      "open_issues": 1,
+      "contributors": 2,
+      "created": "2026-02-16",
+      "last_push": "2026-02-20",
+      "size_kb": 64214,
+      "findings": [
+        "Largest supporting repo by disk (64MB — likely includes data/models)",
+        "Dual-language (TS + Python) — pattern matches enkai platform",
+        "Newest supporting repo (created Feb 16)"
+      ]
+    },
+    "template-factory": {
+      "url": "https://github.com/tegryan-ddo/template-factory",
+      "description": "Template Factory - built on Pedro scaffolding",
+      "role": "Project scaffolding: generates new project structures from templates",
+      "primary_language": "TypeScript",
+      "languages_bytes": {
+        "TypeScript": 107553,
+        "Python": 51329,
+        "JavaScript": 5871,
+        "Shell": 5475,
+        "Dockerfile": 731
+      },
+      "open_issues": 0,
+      "contributors": 1,
+      "created": "2026-02-06",
+      "last_push": "2026-02-20",
+      "size_kb": 394,
+      "findings": [
+        "Built on Pedro framework — consistent with ecosystem pattern",
+        "Actively maintained"
+      ]
+    },
+    "janus": {
+      "url": "https://github.com/tegryan-ddo/janus",
+      "description": "Centralized deployment orchestration service - accepts deployment requests, orchestrates pipelines, learns failure patterns, opens GitHub issues for code-level fixes",
+      "role": "Planned: deployment orchestration with self-healing capabilities",
+      "primary_language": null,
+      "languages_bytes": {},
+      "ci_cd": {
+        "type": "none"
+      },
+      "open_issues": 0,
+      "contributors": 0,
+      "created": "2026-02-12",
+      "last_push": "2026-02-12",
+      "size_kb": 0,
+      "is_empty": true,
+      "findings": [
+        "Empty repo — planned but not started",
+        "Ambitious description suggests self-healing deployment orchestration",
+        "Created same day as enkai-infra — part of the multirepo extraction"
+      ]
+    },
+    "brandassador": {
+      "url": "https://github.com/tegryan-ddo/brandassador",
+      "description": "Brandassador - built on Pedro scaffolding",
+      "role": "Brand management: content generation and brand consistency tooling",
+      "primary_language": "TypeScript",
+      "languages_bytes": {
+        "TypeScript": 219746,
+        "Python": 67603,
+        "CSS": 6400,
+        "JavaScript": 2609,
+        "Shell": 1392
+      },
+      "open_issues": 18,
+      "contributors": 1,
+      "created": "2026-02-06",
+      "last_push": "2026-02-24",
+      "size_kb": 931,
+      "findings": [
+        "Highest open issue count in the org (18)",
+        "Most recently pushed repo (today)",
+        "Built on Pedro framework"
+      ]
+    }
+  },
+  "cross_repo_findings": {
+    "schema_drift_risk": {
+      "severity": "high",
+      "description": "JSON Schema definitions exist in 3 repos without a shared registry",
+      "repos_affected": ["enkai", "enkai-builder", "enkai-issue-manager"],
+      "details": {
+        "enkai": "schemas/ directory with platform-level schemas",
+        "enkai_builder": "schemas/ directory with 9+ schemas (job, result, evidence, handoff, workitem, SDLC contracts, StepFunctions)",
+        "enkai_issue_manager": "schemas/v1/ directory with 4 schemas (checkpoint, issue_state, job_dispatch, webhook_event)"
+      },
+      "risk": "Schema changes in one repo can break consumers in other repos with no compile-time or CI check"
+    },
+    "shared_types_duplication": {
+      "severity": "high",
+      "description": "shared_types/ directory exists in both enkai-builder and enkai-issue-manager with overlapping Python types",
+      "repos_affected": ["enkai-builder", "enkai-issue-manager"],
+      "files_in_issue_manager": ["__init__.py", "github_app_auth.py", "multi_repo_types.py"],
+      "risk": "Changes to shared types require manual synchronization across repos; divergence causes runtime failures"
+    },
+    "monorepo_to_multirepo_incomplete": {
+      "severity": "medium",
+      "description": "enkai monorepo still contains infra/cdk and dashboard directories despite enkai-infra and enkai-monitor existing as separate repos",
+      "repos_affected": ["enkai", "enkai-infra", "enkai-monitor"],
+      "enkai_retained_dirs": ["infra/cdk", "dashboard"],
+      "risk": "Unclear which copy is authoritative; developers may edit the wrong location"
+    },
+    "split_ci_cd": {
+      "severity": "medium",
+      "description": "CI/CD is split across GitHub Actions and CodeBuild with most satellite repos having no CI at all",
+      "details": {
+        "github_actions": {"repos": ["enkai"], "workflows": 5},
+        "codebuild": {"repos": ["enkai-issue-manager", "enkai-infra"], "has_buildspec": true},
+        "no_ci": {"repos": ["enkai-builder", "enkai-monitor", "frank", "pedro", "metis", "template-factory", "brandassador"]}
+      },
+      "migration_planned": "enkai-infra issue #31 tracks migration to self-hosted GitHub Actions",
+      "risk": "No automated testing or deployment for 7 active repos; manual deployments increase error rate"
+    },
+    "bus_factor": {
+      "severity": "medium",
+      "description": "Several critical repos have only 1 contributor",
+      "repos_affected": {
+        "single_contributor": ["enkai-builder", "enkai-issue-manager", "enkai-monitor"],
+        "two_contributors": ["enkai", "enkai-infra", "frank", "pedro", "metis"]
+      },
+      "risk": "Core platform components (builder, issue-manager) depend on a single person's knowledge"
+    },
+    "dependency_graph": {
+      "description": "Logical dependency flow of the Enkai platform",
+      "flow": "GitHub webhook → enkai-issue-manager → SQS → enkai-builder → PR pipeline",
+      "infrastructure": "enkai-infra (CDK) provisions all AWS resources",
+      "monitoring": "enkai-monitor provides dashboard and health checks",
+      "container_runtime": "frank provides ECS container management for AI agents",
+      "skills": "pedro provides reusable agent skills consumed by frank containers",
+      "scaffolding": "template-factory generates new project structures"
+    }
+  },
+  "key_strengths": [
+    "Formal JSON Schema contracts for inter-service communication (9+ schemas in enkai-builder)",
+    "Comprehensive CDK infrastructure (30 stacks in enkai-infra covering all AWS services)",
+    "Bedrock AgentCore integration in enkai-builder for AI agent orchestration",
+    "Self-hosted GitHub Actions runner planned (enkai-infra issue #35)",
+    "Pedro skills ecosystem enables reusable agent capabilities across projects",
+    "Frank container runtime provides production-grade ECS Fargate isolation",
+    "Template-factory and Pedro framework enable consistent project scaffolding",
+    "SQS-based async architecture (issue-manager → builder) provides natural backpressure"
+  ],
+  "key_risks": [
+    "Schema drift across 3 repos with no registry or version management",
+    "shared_types/ copy-pasted between enkai-builder and enkai-issue-manager",
+    "Monorepo-to-multirepo migration incomplete (enkai retains infra/ and dashboard/)",
+    "Split CI/CD: GitHub Actions in enkai, CodeBuild in satellites, no CI in 7 repos",
+    "Janus repo empty — deployment orchestration planned but not started",
+    "Bus factor of 1 for critical repos (enkai-builder, enkai-issue-manager)",
+    "Test coverage unknown — no CI means no enforced coverage floor",
+    "enkai-monitor stale since January 30"
+  ]
+}
