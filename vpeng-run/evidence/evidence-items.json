@@ -142,11 +142,41 @@
       "snippet": "An LLM gateway is a proxy layer that sits between your application and LLM providers. Instead of your application calling multiple provider APIs directly, it sends requests to a single gateway endpoint that handles routing, caching, failover, and monitoring.",
       "reliability_score": 0.75,
       "claim_extracted": "LLM gateways provide unified routing, caching, failover, and monitoring"
+    },
+    {
+      "id": "ev-015",
+      "source_type": "internal_analysis",
+      "title": "tegryan-ddo GitHub Organization Repo Analysis — Enkai Platform",
+      "url": "vpeng-run/evidence/repo-analysis.json#platform_repos",
+      "date": "2026-02-24",
+      "snippet": "Enkai platform spans 6 repos: monorepo (TS/Python, 8.3MB), enkai-infra (30 CDK stacks), enkai-builder (Python, 6.3MB, Bedrock AgentCore), enkai-issue-manager (Python, SQS dispatch), enkai-monitor (TS dashboard), enkai-nextjs-template. Architecture: GitHub webhook → issue-manager → SQS → builder → PR pipeline.",
+      "reliability_score": 1.0,
+      "claim_extracted": "Enkai platform already implements core agent pipeline (issue intake → decomposition → build → PR) with 30 CDK infrastructure stacks and Bedrock AgentCore integration"
+    },
+    {
+      "id": "ev-016",
+      "source_type": "internal_analysis",
+      "title": "tegryan-ddo Cross-Repo Technical Debt Assessment",
+      "url": "vpeng-run/evidence/repo-analysis.json#cross_repo_findings",
+      "date": "2026-02-24",
+      "snippet": "Critical findings: (1) Schema drift — JSON schemas in 3 repos without shared registry. (2) shared_types/ copy-pasted between enkai-builder and enkai-issue-manager. (3) Monorepo-to-multirepo extraction incomplete — enkai retains infra/cdk and dashboard/. (4) Split CI/CD — GitHub Actions in enkai, CodeBuild in 2 satellites, no CI in 7 repos. (5) Janus deployment orchestrator empty.",
+      "reliability_score": 1.0,
+      "claim_extracted": "Five cross-cutting technical debt items require remediation: schema drift, shared_types duplication, incomplete monorepo extraction, split CI/CD, and missing deployment orchestration"
+    },
+    {
+      "id": "ev-017",
+      "source_type": "internal_analysis",
+      "title": "tegryan-ddo Supporting Ecosystem Analysis",
+      "url": "vpeng-run/evidence/repo-analysis.json#supporting_repos",
+      "date": "2026-02-24",
+      "snippet": "Supporting ecosystem: frank (Go, ECS container runtime for AI agents), pedro (Python, reusable skills framework), metis (TS/Python, dev toolkit), template-factory (project scaffolding), brandassador (brand tooling, 18 open issues). 31 total repos, 16 active since Jan 2026, TypeScript dominant, 3 unique contributors.",
+      "reliability_score": 1.0,
+      "claim_extracted": "Supporting ecosystem provides container runtime (frank), skills framework (pedro), dev toolkit (metis), and scaffolding (template-factory) — all actively maintained"
     }
   ],
   "summary": {
-    "total_items": 14,
-    "high_reliability": 4,
+    "total_items": 17,
+    "high_reliability": 7,
     "medium_reliability": 10,
     "key_themes": [
       "Agent-specific observability beyond traditional monitoring",
@@ -155,7 +185,10 @@
       "Semantic caching for latency/cost reduction",
       "Model routing for cost optimization",
       "Pre-production simulation testing",
-      "Tool schema standardization"
+      "Tool schema standardization",
+      "Existing Enkai platform as foundation for reliability strategy",
+      "Cross-repo technical debt requiring remediation (schema drift, shared_types, CI/CD)",
+      "Supporting ecosystem maturity (frank, pedro, metis, template-factory)"
     ]
   }
 }
