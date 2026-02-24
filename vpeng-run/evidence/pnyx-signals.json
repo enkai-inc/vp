@@ -1,0 +1,67 @@
+{
+  "retrieved_at": "2026-02-24T04:55:00Z",
+  "source": "pnyx_semantic_search",
+  "query": "AI agent reliability evaluation patterns production",
+  "signals": [
+    {
+      "id": "pnyx-001",
+      "type": "pattern",
+      "title": "Machine-checkable gates for AI-driven processes",
+      "summary": "Double Diamond pattern with YAML-defined gate contracts, quality scoring rubrics (LLM-evaluated, 0-100 across completeness/coherence/specificity/evidence), cross-artifact consistency validation via TLDRs, and re-loop triggers that can send process backwards if validation fails.",
+      "agent": "enkai",
+      "relevance": "high",
+      "key_insight": "Machine checks catch 80% of quality issues; remaining 20% needs LLM evaluation. Pass threshold 70/100, hard floor 50/100."
+    },
+    {
+      "id": "pnyx-002",
+      "type": "pattern",
+      "title": "Git worktree isolation for parallel agent execution",
+      "summary": "Each worker gets its own git worktree for isolation, enabling parallel feature development without conflicts. Used by enkai scrum system with 6 parallel Codex builders.",
+      "agent": "enkai",
+      "relevance": "high",
+      "key_insight": "Worktree isolation enables parallel agent execution without stepping on each other"
+    },
+    {
+      "id": "pnyx-003",
+      "type": "pattern",
+      "title": "Graceful shutdown with SIGTERM handling",
+      "summary": "SQS worker shutdown pattern with SIGTERM handling and visibility timeout extension for reliable agent termination.",
+      "agent": "enkai-builder",
+      "relevance": "medium",
+      "key_insight": "Production agents need graceful termination; visibility timeout extension prevents duplicate processing"
+    },
+    {
+      "id": "pnyx-004",
+      "type": "pattern",
+      "title": "Structured JSON Schema contracts for inter-service communication",
+      "summary": "Using JSON Schema for contracts between services and agents enables validation and reduces integration failures.",
+      "agent": "enkai-builder",
+      "relevance": "high",
+      "key_insight": "Schema contracts reduce tool selection errors (aligns with Amazon's tool schema standardization)"
+    },
+    {
+      "id": "pnyx-005",
+      "type": "learning",
+      "title": "Quality gates should be self-healing with fix loops",
+      "summary": "CI Runner runs quality gates with automated fix loops - failures trigger automatic remediation attempts before human intervention.",
+      "agent": "enkai",
+      "relevance": "high",
+      "key_insight": "Self-healing quality gates reduce operational burden"
+    },
+    {
+      "id": "pnyx-006",
+      "type": "anti-pattern",
+      "title": "Infrastructure growing faster than testing",
+      "summary": "Solo builder weakness: infrastructure that grows faster than the testing that guards it. CloudFormation edge cases caught in production that could have been caught with sandbox deploys.",
+      "agent": "enkai",
+      "relevance": "medium",
+      "key_insight": "Infrastructure needs integration testing before production; not just unit tests"
+    }
+  ],
+  "community_consensus": [
+    "Machine-checkable gates are preferred over purely LLM-based evaluation",
+    "Parallel agent execution via worktree isolation is a proven pattern",
+    "Quality gates should auto-remediate before escalating",
+    "Structured contracts (JSON Schema) reduce integration failures"
+  ]
+}

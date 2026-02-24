@@ -1,0 +1,178 @@
+{
+  "id": "critique-001",
+  "draft_id": "draft-001-v1",
+  "created_at": "2026-02-24T04:54:00Z",
+  "challenger_model": "self-critique (GPT-5.2 Pro unavailable)",
+
+  "overall_assessment": "major_revision",
+
+  "issues": [
+    {
+      "id": "ISS-001",
+      "category": "timeline",
+      "severity": "critical",
+      "title": "MVP scope unrealistic for 8 engineers in 3 months",
+      "description": "Q1 roadmap includes Agent Harness MVP, Eval Framework Foundation, Basic Observability, AND LLM Gateway Alpha. Each is a substantial system. With 8 engineers and realistic onboarding, context-switching, and integration overhead, delivering all four to production quality in one quarter is highly aggressive.",
+      "suggested_fix": "Reduce Q1 scope to Agent Harness MVP + one supporting system. Defer Gateway and full Eval to Q2.",
+      "questions": [
+        "What is the actual onboarding time for new hires?",
+        "Are all 8 engineers already productive, or is this a target headcount?"
+      ]
+    },
+    {
+      "id": "ISS-002",
+      "category": "architecture",
+      "severity": "major",
+      "title": "Self-verification latency impact underestimated",
+      "description": "The assumption states '< 20% latency overhead' for self-verification, but LLM-based verification (mentioned in Q2) requires an additional LLM call. On a 1.5s base latency, even a fast verification call adds 300-500ms (20-33%). For complex verification, this could double overall latency.",
+      "suggested_fix": "Define tiered verification: fast rules-based for most cases, LLM-based only for high-stakes or ambiguous outputs. Include latency budget in architecture.",
+      "questions": [
+        "What percentage of outputs require LLM-based verification?",
+        "Is there a latency SLA that verification must respect?"
+      ]
+    },
+    {
+      "id": "ISS-003",
+      "category": "cost",
+      "severity": "major",
+      "title": "Self-verification doubles LLM costs in worst case",
+      "description": "If every agent output requires LLM-based verification, costs effectively double. The cost optimization layer (routing, caching) may be offset by verification overhead.",
+      "suggested_fix": "Quantify verification cost impact. Consider confidence-based routing: verify only low-confidence outputs. Include verification costs in the 40% reduction target.",
+      "questions": [
+        "What is the expected verification rate (% of outputs verified)?",
+        "Does the 40% cost reduction target account for verification overhead?"
+      ]
+    },
+    {
+      "id": "ISS-004",
+      "category": "competitive",
+      "severity": "major",
+      "title": "Reliability positioning may not be defensible",
+      "description": "Reliability is a feature, not a moat. Langfuse, Maxim, Arize are all investing heavily in reliability tooling. Anthropic itself is publishing reliability patterns. Within 12 months, 'reliability' may be table stakes, not a differentiator.",
+      "suggested_fix": "Identify a more defensible wedge: specific vertical (legal agents, medical agents), proprietary evaluation datasets, or unique self-correction algorithms. Reliability alone is necessary but not sufficient.",
+      "questions": [
+        "What prevents well-funded competitors from matching reliability features?",
+        "Is there a vertical or domain where we can build defensible expertise?"
+      ]
+    },
+    {
+      "id": "ISS-005",
+      "category": "resourcing",
+      "severity": "major",
+      "title": "Team composition unclear",
+      "description": "The roadmap assumes specific effort allocations (e.g., '3 engineers, 6 weeks') but doesn't specify required skill sets. Building an LLM Gateway requires different skills than building an Eval Framework. With only 8 engineers total, skill gaps could be critical.",
+      "suggested_fix": "Define required skill matrix: infra/platform, ML/LLM, frontend, DevOps. Identify gaps against current team. Prioritize hiring to fill critical gaps.",
+      "questions": [
+        "What is the current team composition by skill area?",
+        "Are any roadmap items blocked on hiring specific roles?"
+      ]
+    },
+    {
+      "id": "ISS-006",
+      "category": "security",
+      "severity": "major",
+      "title": "Sandbox security model not specified",
+      "description": "Architecture mentions 'Sandbox Container' but doesn't detail the isolation model. Agent code execution is a high-risk surface. Escape vulnerabilities, resource exhaustion, and data exfiltration are all potential attack vectors.",
+      "suggested_fix": "Specify sandbox technology (gVisor, Firecracker, Docker with security profiles). Define resource limits, network isolation, and data access controls. Schedule security review before MVP launch.",
+      "questions": [
+        "What sandbox technology will be used?",
+        "Is there a threat model for agent execution?",
+        "Will agents have network access? To what endpoints?"
+      ]
+    },
+    {
+      "id": "ISS-007",
+      "category": "feasibility",
+      "severity": "minor",
+      "title": "Semantic caching hit rate assumption may not transfer",
+      "description": "Evidence cites 60-85% hit rates 'in workloads with strong semantic repetition (such as customer support FAQs)'. Agent workloads may have lower repetition, especially for complex reasoning tasks.",
+      "suggested_fix": "Run pilot study on representative agent workloads before committing to caching infrastructure. Set realistic target (e.g., 40% hit rate) until validated.",
+      "questions": [
+        "What is the expected query diversity in target use cases?",
+        "Do we have sample data to benchmark potential hit rates?"
+      ]
+    },
+    {
+      "id": "ISS-008",
+      "category": "governance",
+      "severity": "minor",
+      "title": "Eval coverage metric lacks definition",
+      "description": "'100% of agent behaviors have eval coverage' is stated as a success criterion, but 'behavior' is undefined. Without a taxonomy of behaviors, this metric is unmeasurable.",
+      "suggested_fix": "Define behavior taxonomy: tool selection, output generation, error handling, termination, etc. Create coverage matrix with specific test types per behavior category.",
+      "questions": [
+        "What constitutes a 'behavior' for eval coverage purposes?",
+        "How will coverage be measured and reported?"
+      ]
+    },
+    {
+      "id": "ISS-009",
+      "category": "architecture",
+      "severity": "observation",
+      "title": "Multi-provider dependency creates operational complexity",
+      "description": "Architecture shows Claude, GPT, and Local Models. Each has different rate limits, error modes, and pricing. Failover logic and model-specific tuning add significant operational burden.",
+      "suggested_fix": "Consider Claude-primary strategy with fallback only for specific use cases. Reduces integration surface and operational complexity.",
+      "questions": []
+    },
+    {
+      "id": "ISS-010",
+      "category": "timeline",
+      "severity": "observation",
+      "title": "Agent Marketplace in Q4 is premature",
+      "description": "Marketplace features (reusable templates, community contributions) require a mature platform and user base. Building marketplace infrastructure before validating core platform may waste resources.",
+      "suggested_fix": "Defer marketplace to Year 2. Focus Q4 on platform hardening and enterprise adoption.",
+      "questions": []
+    }
+  ],
+
+  "risks": [
+    {
+      "risk": "MVP delay due to underestimated scope",
+      "likelihood": "high",
+      "impact": "high",
+      "mitigation": "Ruthless scope reduction; define non-negotiable MVP vs. nice-to-have"
+    },
+    {
+      "risk": "Reliability differentiation erodes as market matures",
+      "likelihood": "medium",
+      "impact": "critical",
+      "mitigation": "Build proprietary eval datasets, domain-specific agents, or unique self-correction IP"
+    },
+    {
+      "risk": "Security incident from agent sandbox escape",
+      "likelihood": "low",
+      "impact": "critical",
+      "mitigation": "Invest in sandbox security early; external security audit before GA"
+    },
+    {
+      "risk": "Key person dependency on LLM/ML expertise",
+      "likelihood": "medium",
+      "impact": "high",
+      "mitigation": "Document all ML-specific decisions; cross-train team members"
+    },
+    {
+      "risk": "LLM provider pricing changes disrupt cost model",
+      "likelihood": "medium",
+      "impact": "medium",
+      "mitigation": "Multi-provider support; local model capability as hedge"
+    }
+  ],
+
+  "alternative_sequencing": [
+    {
+      "proposal": "Sequence: Harness first, then Eval, then Gateway (not parallel)",
+      "rationale": "Agent Harness is the core value. Eval validates it works. Gateway optimizes cost/latency. This is the logical dependency order. Building in parallel risks integration issues and diffuse focus."
+    },
+    {
+      "proposal": "Defer Self-Verification V2 (LLM-based) to Q3",
+      "rationale": "Rules-based verification in MVP is sufficient for initial reliability claims. LLM-based verification adds cost/latency complexity that should be optimized only after baseline is stable."
+    }
+  ],
+
+  "open_questions": [
+    "What is the actual MVP definition that would satisfy initial customers?",
+    "Which customers have committed to pilot the platform?",
+    "What is the fallback plan if Q1 MVP slips by 4+ weeks?",
+    "How will we measure 'reliability' in a way customers can verify?",
+    "What is our position on EU AI Act compliance for agent systems?"
+  ]
+}

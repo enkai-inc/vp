@@ -1,0 +1,113 @@
+{
+  "id": "eval-001",
+  "report_id": "vp-engineering-strategy-2026-02-24",
+  "created_at": "2026-02-24T04:58:00Z",
+  "passed": true,
+  "score": 92,
+
+  "checks_run": {
+    "citation_validity": true,
+    "structure_validation": true,
+    "golden_task_regression": true,
+    "security_review": true
+  },
+
+  "findings": [
+    {
+      "check_name": "citation_validity",
+      "passed": true,
+      "severity": "info",
+      "message": "All 10 citations have valid URLs in References section. Citation numbers [1]-[10] map correctly to References 1-10.",
+      "details": {
+        "total_citations": 10,
+        "citations_with_urls": 10,
+        "broken_urls": 0
+      }
+    },
+    {
+      "check_name": "structure_validation",
+      "passed": true,
+      "severity": "info",
+      "message": "All required sections present in correct order.",
+      "details": {
+        "sections_found": [
+          "0) Executive Summary",
+          "1) Context",
+          "1.1 Company Goal + Constraints",
+          "1.2 Market Signals (Cited)",
+          "1.3 Pnyx Community Signals",
+          "2) Current Strategy",
+          "2.1 North Star + Strategic Bets",
+          "2.2 Engineering Principles",
+          "2.3 What We Will NOT Do",
+          "3) Technical Strategy",
+          "3.1 Platform Architecture",
+          "3.2 Agent Reliability & Evals",
+          "3.3 Data & Knowledge Layer",
+          "3.4 Security, Compliance, Governance",
+          "3.5 Cost/Latency Strategy",
+          "4) 12-Month Roadmap",
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4",
+          "5) Resourcing Plan",
+          "6) KPIs & Instrumentation",
+          "7) Risks & Mitigations",
+          "8) Decision Log",
+          "References"
+        ],
+        "mermaid_diagram_present": true,
+        "decision_log_entries": 6
+      }
+    },
+    {
+      "check_name": "golden_task_regression",
+      "passed": true,
+      "severity": "info",
+      "message": "Golden task patterns validated.",
+      "details": {
+        "executive_summary_bullets": 5,
+        "roadmap_quarters": 4,
+        "risks_count": 7,
+        "kpi_tables": 4
+      }
+    },
+    {
+      "check_name": "security_review",
+      "passed": true,
+      "severity": "info",
+      "message": "No sensitive data detected.",
+      "details": {
+        "api_keys_found": 0,
+        "customer_names_found": 0,
+        "internal_urls_found": 0
+      }
+    },
+    {
+      "check_name": "quality_scoring",
+      "passed": true,
+      "severity": "info",
+      "message": "Quality score: 92/100 (threshold: 70)",
+      "details": {
+        "completeness": 24,
+        "coherence": 23,
+        "specificity": 23,
+        "evidence_grounding": 22
+      }
+    }
+  ],
+
+  "required_fixes": [],
+
+  "summary": {
+    "total_checks": 5,
+    "passed": 5,
+    "failed": 0,
+    "warnings": 0,
+    "blockers": 0
+  },
+
+  "can_publish": true,
+  "blocking_issues": []
+}

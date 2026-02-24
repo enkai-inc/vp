@@ -1,0 +1,147 @@
+{
+  "id": "recon-001",
+  "draft_id": "draft-001-v1",
+  "critique_id": "critique-001",
+  "created_at": "2026-02-24T04:56:00Z",
+
+  "critique_responses": [
+    {
+      "issue_id": "ISS-001",
+      "title": "MVP scope unrealistic for 8 engineers in 3 months",
+      "disposition": "accepted",
+      "rationale": "Critique is valid. Four substantial systems in parallel is overreach. Will reduce Q1 scope to Agent Harness MVP + Basic Eval Foundation. Gateway and full Observability deferred to Q2.",
+      "changes_made": "Revised Q1 roadmap: (1) Agent Harness MVP - 4 engineers, 10 weeks; (2) Eval Foundation - 3 engineers, 10 weeks; (3) Basic Tracing - 1 engineer, 6 weeks (lightweight, not full observability)"
+    },
+    {
+      "issue_id": "ISS-002",
+      "title": "Self-verification latency impact underestimated",
+      "disposition": "accepted",
+      "rationale": "Valid concern. LLM-based verification does add significant latency. Will implement tiered approach as suggested.",
+      "changes_made": "Added tiered verification architecture: Tier 1 (rules-based, <50ms) for all outputs; Tier 2 (LLM-based, 300-500ms) only for low-confidence or high-stakes outputs. Defined latency budget: verification must not exceed 25% of base latency."
+    },
+    {
+      "issue_id": "ISS-003",
+      "title": "Self-verification doubles LLM costs in worst case",
+      "disposition": "accepted",
+      "rationale": "Cost impact is real. Confidence-based routing is the right mitigation.",
+      "changes_made": "Updated cost model: Tier 2 verification expected for <20% of outputs. Cost reduction target revised to 30% (from 40%) to account for verification overhead. Added metric: verification cost ratio tracked per agent."
+    },
+    {
+      "issue_id": "ISS-004",
+      "title": "Reliability positioning may not be defensible",
+      "disposition": "partially_accepted",
+      "rationale": "Agree that reliability alone is not a moat. However, disagree that we must pick a vertical now. The moat is in the evaluation datasets and self-correction algorithms, not the positioning claim.",
+      "changes_made": "Added strategic bet: 'Proprietary Eval Datasets' - build domain-specific golden datasets and correction patterns that competitors cannot easily replicate. Pnyx community signals reinforce machine-checkable gates as a differentiation vector (80% of quality issues caught by machine checks)."
+    },
+    {
+      "issue_id": "ISS-005",
+      "title": "Team composition unclear",
+      "disposition": "accepted",
+      "rationale": "Valid gap. Cannot execute without skill clarity.",
+      "changes_made": "Added team composition section: Required: 2 infra/platform, 2 ML/LLM specialists, 2 backend, 1 frontend, 1 DevOps. Current gaps: ML/LLM (need 1 hire Q1), infra (need 1 hire Q1). Roadmap now shows role assignments per milestone."
+    },
+    {
+      "issue_id": "ISS-006",
+      "title": "Sandbox security model not specified",
+      "disposition": "accepted",
+      "rationale": "Critical gap. Security model must be defined before MVP.",
+      "changes_made": "Added sandbox specification: gVisor for lightweight isolation, Firecracker for multi-tenant production. Resource limits: 2GB RAM, 1 vCPU, 60s max execution, no network by default. Security review scheduled for Week 8 of Q1. Threat model document added to Q1 deliverables."
+    },
+    {
+      "issue_id": "ISS-007",
+      "title": "Semantic caching hit rate assumption may not transfer",
+      "disposition": "accepted",
+      "rationale": "Prudent to validate before committing infrastructure.",
+      "changes_made": "Reduced target to 40% hit rate until validated. Added pilot study to Q1 (Week 6-8): sample production traffic to benchmark actual hit rates. Gateway caching moved to Q2, dependent on pilot results."
+    },
+    {
+      "issue_id": "ISS-008",
+      "title": "Eval coverage metric lacks definition",
+      "disposition": "accepted",
+      "rationale": "Unmeasurable metrics are useless.",
+      "changes_made": "Defined behavior taxonomy: (1) Tool Selection, (2) Output Generation, (3) Error Handling, (4) Termination Logic, (5) State Management. Coverage matrix: each behavior category requires unit tests + integration tests + golden dataset examples. Metric: % of taxonomy cells with passing tests."
+    },
+    {
+      "issue_id": "ISS-009",
+      "title": "Multi-provider dependency creates operational complexity",
+      "disposition": "rejected",
+      "rationale": "Multi-provider is strategic. Single-provider lock-in is a business risk. The operational complexity is acceptable given the risk mitigation. Pnyx community signals show structured contracts (JSON Schema) reduce integration failures.",
+      "changes_made": "No change to multi-provider strategy. Added: standardized provider interface contract (JSON Schema) to minimize per-provider integration burden."
+    },
+    {
+      "issue_id": "ISS-010",
+      "title": "Agent Marketplace in Q4 is premature",
+      "disposition": "accepted",
+      "rationale": "Agree. Marketplace before platform validation is putting the cart before the horse.",
+      "changes_made": "Marketplace deferred to Year 2. Q4 focus changed to: Platform Hardening, SOC2 preparation, and Enterprise Pilot program."
+    }
+  ],
+
+  "updated_roadmap": {
+    "q1": [
+      {"milestone": "Agent Harness MVP", "description": "Core runtime with termination conditions, tiered self-verification (rules-based), artifact persistence", "effort": "4 engineers, 10 weeks", "roles": "2 backend, 1 ML, 1 infra"},
+      {"milestone": "Eval Foundation", "description": "Behavior taxonomy, golden dataset infrastructure, basic quality metrics, CI integration", "effort": "3 engineers, 10 weeks", "roles": "1 ML, 1 backend, 1 DevOps"},
+      {"milestone": "Basic Tracing", "description": "Lightweight trace collection, basic dashboard", "effort": "1 engineer, 6 weeks", "roles": "1 infra"},
+      {"milestone": "Sandbox Security Spec", "description": "Threat model, gVisor integration, security review", "effort": "Included in Harness MVP"},
+      {"milestone": "Cache Pilot", "description": "Benchmark semantic caching on sample traffic", "effort": "1 engineer, 3 weeks (weeks 6-8)", "roles": "1 infra"}
+    ],
+    "q2": [
+      {"milestone": "LLM Gateway", "description": "Routing, caching (if pilot validates), failover", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Full Observability", "description": "Reasoning chain viz, cost attribution, alert framework", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Self-Verification V2", "description": "LLM-based verification for high-stakes outputs, confidence routing", "effort": "2 engineers, 6 weeks"},
+      {"milestone": "SDK Release", "description": "Python and TypeScript SDKs", "effort": "2 engineers, 8 weeks"}
+    ],
+    "q3": [
+      {"milestone": "Multi-Agent Orchestration", "description": "Coordination patterns, shared state, handoff protocols", "effort": "3 engineers, 10 weeks"},
+      {"milestone": "Simulation Testing", "description": "Pre-production scenario simulation, persona-based testing", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Advanced Eval", "description": "LLM-evaluated quality scoring (pnyx pattern), cross-artifact consistency", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Enterprise Features", "description": "SSO, audit logs, compliance reporting", "effort": "2 engineers, 6 weeks"}
+    ],
+    "q4": [
+      {"milestone": "Scale & Optimize", "description": "Performance tuning, cost optimization, operational maturity", "effort": "3 engineers, 12 weeks"},
+      {"milestone": "Platform Hardening", "description": "Security audit, penetration testing, SOC2 prep", "effort": "2 engineers, 10 weeks"},
+      {"milestone": "Enterprise Pilot Program", "description": "3-5 enterprise design partners, feedback integration", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Advanced Safety Suite", "description": "Behavioral testing, adversarial robustness", "effort": "2 engineers, 8 weeks"}
+    ]
+  },
+
+  "unresolved_blockers": [],
+
+  "decision_log_additions": [
+    {
+      "decision_id": "DEC-001",
+      "decision": "Reduce Q1 scope to Harness + Eval only; defer Gateway to Q2",
+      "rationale": "8 engineers cannot deliver 4 systems in parallel. Focus on core value (reliability runtime + eval) first.",
+      "alternatives_considered": ["Hire more engineers for Q1", "Deliver Gateway MVP instead of full Eval"],
+      "status": "final"
+    },
+    {
+      "decision_id": "DEC-002",
+      "decision": "Implement tiered verification (rules-based default, LLM-based for high-stakes)",
+      "rationale": "Balances reliability with latency/cost constraints. Rules-based catches 80% of issues per pnyx community data.",
+      "alternatives_considered": ["LLM-based verification for all outputs", "Rules-based only"],
+      "status": "final"
+    },
+    {
+      "decision_id": "DEC-003",
+      "decision": "Maintain multi-provider strategy despite operational complexity",
+      "rationale": "Single-provider lock-in is unacceptable business risk. Structured contracts (JSON Schema) mitigate integration burden.",
+      "alternatives_considered": ["Claude-only strategy", "Primary + single fallback"],
+      "status": "final"
+    },
+    {
+      "decision_id": "DEC-004",
+      "decision": "Defer Agent Marketplace to Year 2",
+      "rationale": "Platform must be validated before building ecosystem features.",
+      "alternatives_considered": ["Simple templates in Q4", "Partner-built marketplace"],
+      "status": "final"
+    },
+    {
+      "decision_id": "DEC-005",
+      "decision": "Use gVisor for sandbox with Firecracker for multi-tenant production",
+      "rationale": "gVisor is lighter for development; Firecracker provides stronger isolation for production multi-tenancy.",
+      "alternatives_considered": ["Docker-only", "Firecracker-only", "Cloud Run isolation"],
+      "status": "provisional"
+    }
+  ]
+}

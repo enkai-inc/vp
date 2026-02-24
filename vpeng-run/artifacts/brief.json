@@ -1,0 +1,24 @@
+{
+  "id": "brief-001",
+  "created_at": "2026-02-24T04:51:52Z",
+  "goal": "Establish AI agent reliability framework for production deployment",
+  "constraints": [
+    "Budget: $500K engineering spend Q1",
+    "Team: 8 engineers (4 senior, 4 mid)",
+    "Timeline: MVP in 3 months"
+  ],
+  "time_horizon": "12-month",
+  "context": {
+    "company_stage": "Series B",
+    "current_team_size": 45,
+    "existing_tech_stack": ["Python", "TypeScript", "AWS", "PostgreSQL"],
+    "competitive_landscape": "Crowded AI tooling market, differentiation via reliability"
+  },
+  "priorities": [
+    {"name": "reliability", "weight": 0.4},
+    {"name": "developer_experience", "weight": 0.3},
+    {"name": "cost_efficiency", "weight": 0.2},
+    {"name": "time_to_market", "weight": 0.1}
+  ],
+  "stakes": "medium"
+}
