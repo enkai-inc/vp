@@ -1,0 +1,161 @@
+{
+  "session_id": "vpeng-20260224-045152",
+  "retrieved_at": "2026-02-24T04:52:00Z",
+  "pnyx_status": "unavailable - no API key",
+  "evidence_items": [
+    {
+      "id": "ev-001",
+      "source_type": "web_article",
+      "title": "Agentic AI Frameworks in 2026: The Practical Guide to Building Reliable AI Agents",
+      "url": "https://dev.to/nithiyanantham_m/agentic-ai-frameworks-in-2026-the-practical-guide-to-building-reliable-ai-agents-50ph",
+      "date": "2026-02-24",
+      "snippet": "Popular frameworks include CrewAI, LangGraph, AutoGen, LlamaIndex, AutoAgent, DSPy, Haystack, and Microsoft Semantic Kernel. Performance at scale is key when deploying agentic AI solutions in production.",
+      "reliability_score": 0.7,
+      "claim_extracted": "Multiple production-ready agent frameworks exist with varying scalability characteristics"
+    },
+    {
+      "id": "ev-002",
+      "source_type": "industry_report",
+      "title": "5 best AI agent observability tools for agent reliability in 2026",
+      "url": "https://www.braintrust.dev/articles/best-ai-agent-observability-tools-2026",
+      "date": "2026-02-24",
+      "snippet": "89% of organizations have implemented observability for their agents, with quality issues emerging as the primary production barrier at 32%.",
+      "reliability_score": 0.8,
+      "claim_extracted": "Quality issues are the primary production barrier for AI agents at 32%"
+    },
+    {
+      "id": "ev-003",
+      "source_type": "web_article",
+      "title": "AI Agent Monitoring: Best Practices, Tools, and Metrics for 2026",
+      "url": "https://uptimerobot.com/knowledge-hub/monitoring/ai-agent-monitoring-best-practices-tools-and-metrics/",
+      "date": "2026-02-24",
+      "snippet": "AI agents fail in subtle ways—hallucinations, skipped steps, context errors—that traditional uptime monitoring won't catch. Track both system health and agent behavior.",
+      "reliability_score": 0.7,
+      "claim_extracted": "Traditional monitoring insufficient; need agent-specific behavioral tracking"
+    },
+    {
+      "id": "ev-004",
+      "source_type": "research_paper",
+      "title": "Evaluating AI agents: Real-world lessons from building agentic systems at Amazon",
+      "url": "https://aws.amazon.com/blogs/machine-learning/evaluating-ai-agents-real-world-lessons-from-building-agentic-systems-at-amazon/",
+      "date": "2026-02-24",
+      "snippet": "Agentic application evaluation must extend beyond traditional accuracy metrics to encompass quality, performance, responsibility, and cost. Tool schema standardization prevents erroneous tool selection.",
+      "reliability_score": 0.9,
+      "claim_extracted": "Amazon recommends 4-pillar evaluation: quality, performance, responsibility, cost"
+    },
+    {
+      "id": "ev-005",
+      "source_type": "web_article",
+      "title": "Ensuring AI Agent Reliability in Production",
+      "url": "https://www.getmaxim.ai/articles/ensuring-ai-agent-reliability-in-production/",
+      "date": "2026-02-24",
+      "snippet": "Agent simulation allows teams to test agents across hundreds of scenarios and user personas before production deployment. The gap between 'works on my machine' and 'handles production traffic reliably' is larger than most builders expect.",
+      "reliability_score": 0.75,
+      "claim_extracted": "Pre-production simulation testing critical for production readiness"
+    },
+    {
+      "id": "ev-006",
+      "source_type": "web_article",
+      "title": "15 best practices for deploying AI agents in production",
+      "url": "https://blog.n8n.io/best-practices-for-deploying-ai-agents-in-production/",
+      "date": "2026-02-24",
+      "snippet": "Mix workflows and agents—use Airflow for fixed pipelines and let agents branch only where the data truly demands it. Production-ready agents require well-defined termination conditions.",
+      "reliability_score": 0.7,
+      "claim_extracted": "Hybrid workflow-agent architecture recommended; termination conditions essential"
+    },
+    {
+      "id": "ev-007",
+      "source_type": "industry_report",
+      "title": "LLM Evaluation Frameworks & Metrics Guide for 2026",
+      "url": "https://www.mlaidigital.com/blogs/llm-model-evaluation-frameworks-a-complete-guide-for-2026",
+      "date": "2026-02-24",
+      "snippet": "Leading platforms include Maxim for end-to-end observability, Arize AI for production monitoring and drift detection, Langfuse for developer-first tracing, DeepEval for code-driven test automation.",
+      "reliability_score": 0.8,
+      "claim_extracted": "Mature eval platform ecosystem: Maxim, Arize, Langfuse, DeepEval"
+    },
+    {
+      "id": "ev-008",
+      "source_type": "web_article",
+      "title": "Building an LLM evaluation framework: best practices",
+      "url": "https://www.datadoghq.com/blog/llm-evaluation-framework-best-practices/",
+      "date": "2026-02-24",
+      "snippet": "Building an LLM evaluation framework requires five key steps: defining evaluation objectives, creating test datasets, selecting metrics, choosing tools, and implementing automation.",
+      "reliability_score": 0.85,
+      "claim_extracted": "5-step eval framework: objectives, datasets, metrics, tools, automation"
+    },
+    {
+      "id": "ev-009",
+      "source_type": "industry_report",
+      "title": "Top 5 AI Agent Observability Platforms 2026 Guide",
+      "url": "https://o-mega.ai/articles/top-5-ai-agent-observability-platforms-the-ultimate-2026-guide",
+      "date": "2026-02-24",
+      "snippet": "AI agent observability platforms capture agent-specific behaviors that traditional AI monitoring tools miss. They trace multi-step reasoning chains, evaluate output quality with automated metrics, and track costs per request in real time.",
+      "reliability_score": 0.75,
+      "claim_extracted": "Agent observability requires reasoning chain tracing, quality metrics, cost tracking"
+    },
+    {
+      "id": "ev-010",
+      "source_type": "web_article",
+      "title": "Building agents with the Claude Agent SDK",
+      "url": "https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk",
+      "date": "2026-02-24",
+      "snippet": "The Claude Agent SDK uses an initializer agent that sets up the environment on the first run, and a coding agent that makes incremental progress in every session, leaving clear artifacts for the next session.",
+      "reliability_score": 0.95,
+      "claim_extracted": "Claude SDK pattern: initializer + incremental progress + artifact persistence"
+    },
+    {
+      "id": "ev-011",
+      "source_type": "web_article",
+      "title": "Effective harnesses for long-running agents",
+      "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
+      "date": "2026-02-24",
+      "snippet": "Agents that can check and improve their own output are fundamentally more reliable—they catch mistakes before they compound, self-correct when they drift. The most reliable agents leave behind clear, externally legible artifacts.",
+      "reliability_score": 0.95,
+      "claim_extracted": "Self-verification and artifact persistence are key reliability patterns"
+    },
+    {
+      "id": "ev-012",
+      "source_type": "web_article",
+      "title": "LLMOps Guide 2026: Build Fast, Cost-Effective LLM Apps",
+      "url": "https://redis.io/blog/large-language-model-operations-guide/",
+      "date": "2026-02-24",
+      "snippet": "Semantic caching implementations reduced model latency from approximately 1.67 seconds to 0.052 seconds per cache hit, a 96.9% latency reduction. Cache hit rates range from 60-85% in workloads with strong semantic repetition.",
+      "reliability_score": 0.85,
+      "claim_extracted": "Semantic caching achieves 96.9% latency reduction, 60-85% hit rates"
+    },
+    {
+      "id": "ev-013",
+      "source_type": "web_article",
+      "title": "LLM Cost Optimization Guide: Reduce AI Infrastructure 30%",
+      "url": "https://futureagi.com/blogs/llm-cost-optimization-2025",
+      "date": "2026-02-24",
+      "snippet": "Route simple queries to cheaper models while you reserve powerful models for complex reasoning. Teams commonly cut LLM spend by 30 to 50 percent with basic routing, caching, and prompt cleanup.",
+      "reliability_score": 0.8,
+      "claim_extracted": "Model routing + caching + prompt optimization yields 30-50% cost reduction"
+    },
+    {
+      "id": "ev-014",
+      "source_type": "web_article",
+      "title": "Top 5 LLM Gateways for Production in 2026",
+      "url": "https://www.techedubyte.com/llm-gateways-production-2026-performance-reliability-cost/",
+      "date": "2026-02-24",
+      "snippet": "An LLM gateway is a proxy layer that sits between your application and LLM providers. Instead of your application calling multiple provider APIs directly, it sends requests to a single gateway endpoint that handles routing, caching, failover, and monitoring.",
+      "reliability_score": 0.75,
+      "claim_extracted": "LLM gateways provide unified routing, caching, failover, and monitoring"
+    }
+  ],
+  "summary": {
+    "total_items": 14,
+    "high_reliability": 4,
+    "medium_reliability": 10,
+    "key_themes": [
+      "Agent-specific observability beyond traditional monitoring",
+      "4-pillar evaluation: quality, performance, responsibility, cost",
+      "Self-verification and artifact persistence patterns",
+      "Semantic caching for latency/cost reduction",
+      "Model routing for cost optimization",
+      "Pre-production simulation testing",
+      "Tool schema standardization"
+    ]
+  }
+}

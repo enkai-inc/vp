@@ -1,0 +1,168 @@
+{
+  "id": "draft-001-v1",
+  "created_at": "2026-02-24T04:53:00Z",
+  "brief_id": "brief-001",
+  "evidence_refs": ["ev-001", "ev-002", "ev-003", "ev-004", "ev-005", "ev-006", "ev-007", "ev-008", "ev-009", "ev-010", "ev-011", "ev-012", "ev-013", "ev-014"],
+
+  "strategy": {
+    "north_star": "Build the most reliable AI agent platform in the market, where reliability is the primary differentiator",
+    "thesis": "In a crowded AI tooling market, reliability is undersupplied. 32% of organizations cite quality issues as their primary production barrier. By building reliability-first infrastructure with comprehensive evals, self-verification patterns, and production-grade observability, we can capture the enterprise segment that needs agents they can trust.",
+    "engineering_principles": [
+      "Reliability over features: Ship less, but ship reliable",
+      "Eval-driven development: No feature ships without eval coverage",
+      "Self-verification by default: Agents check their own work before completion",
+      "Observable by design: Every agent action is traceable and auditable",
+      "Fail gracefully: Defined termination conditions and fallback behaviors",
+      "Cost-aware: Model routing and caching are first-class concerns"
+    ],
+    "anti_goals": [
+      "We will NOT chase feature parity with every competitor",
+      "We will NOT sacrifice reliability for speed-to-market on new capabilities",
+      "We will NOT build monolithic agents; prefer composable, testable units",
+      "We will NOT rely solely on prompt engineering; invest in structured evaluation",
+      "We will NOT optimize for demo-ware; optimize for production behavior"
+    ]
+  },
+
+  "bets": [
+    {
+      "name": "Reliability-First Agent Framework",
+      "rationale": "89% of orgs have observability but 32% still cite quality issues. The gap is in the framework itself, not just monitoring. Build agents that self-verify, produce legible artifacts, and have defined termination conditions. [ev-002, ev-005, ev-011]",
+      "investment_level": "critical",
+      "success_criteria": [
+        "Agent task completion rate > 95% on production workloads",
+        "Self-correction catches > 80% of errors before user impact",
+        "Zero runaway agent incidents (infinite loops, resource exhaustion)"
+      ]
+    },
+    {
+      "name": "Comprehensive Evaluation Platform",
+      "rationale": "Amazon's 4-pillar framework (quality, performance, responsibility, cost) is the emerging standard. Build evaluation into CI/CD, not as an afterthought. [ev-004, ev-007, ev-008]",
+      "investment_level": "critical",
+      "success_criteria": [
+        "100% of agent behaviors have eval coverage",
+        "Automated regression detection in CI pipeline",
+        "Quality score visible on every deployment"
+      ]
+    },
+    {
+      "name": "Production Observability Stack",
+      "rationale": "Agent-specific observability captures behaviors traditional monitoring misses: reasoning chains, tool selection accuracy, output quality metrics. [ev-003, ev-009]",
+      "investment_level": "high",
+      "success_criteria": [
+        "Full trace visibility for every agent execution",
+        "< 5 minute MTTR for agent-related incidents",
+        "Real-time cost tracking per request"
+      ]
+    },
+    {
+      "name": "Cost/Latency Optimization Layer",
+      "rationale": "30-50% cost reduction achievable via model routing, semantic caching (96.9% latency reduction on hits), and prompt optimization. [ev-012, ev-013, ev-014]",
+      "investment_level": "medium",
+      "success_criteria": [
+        "40% reduction in LLM spend vs. naive implementation",
+        "P95 latency < 2 seconds for standard operations",
+        "Cache hit rate > 60% for repetitive workloads"
+      ]
+    }
+  ],
+
+  "architecture": {
+    "diagram_mermaid": "graph TB\n    subgraph \"Client Layer\"\n        SDK[\"Agent SDK\"]\n        CLI[\"CLI Tools\"]\n        API[\"REST API\"]\n    end\n\n    subgraph \"Gateway Layer\"\n        GW[\"LLM Gateway\"]\n        CACHE[\"Semantic Cache\"]\n        ROUTER[\"Model Router\"]\n    end\n\n    subgraph \"Agent Runtime\"\n        HARNESS[\"Agent Harness\"]\n        SANDBOX[\"Sandbox Container\"]\n        VERIFY[\"Self-Verification\"]\n        TOOLS[\"Tool Registry\"]\n    end\n\n    subgraph \"Evaluation Platform\"\n        EVAL[\"Eval Engine\"]\n        GOLDEN[\"Golden Datasets\"]\n        REGRESS[\"Regression Tests\"]\n        QUALITY[\"Quality Metrics\"]\n    end\n\n    subgraph \"Observability\"\n        TRACE[\"Trace Collector\"]\n        METRICS[\"Metrics Store\"]\n        ALERTS[\"Alert Manager\"]\n        DASH[\"Dashboards\"]\n    end\n\n    subgraph \"LLM Providers\"\n        CLAUDE[\"Claude API\"]\n        GPT[\"OpenAI API\"]\n        LOCAL[\"Local Models\"]\n    end\n\n    SDK --> GW\n    CLI --> GW\n    API --> GW\n    GW --> CACHE\n    GW --> ROUTER\n    ROUTER --> HARNESS\n    HARNESS --> SANDBOX\n    HARNESS --> VERIFY\n    HARNESS --> TOOLS\n    VERIFY --> EVAL\n    EVAL --> GOLDEN\n    EVAL --> REGRESS\n    EVAL --> QUALITY\n    HARNESS --> TRACE\n    TRACE --> METRICS\n    METRICS --> ALERTS\n    METRICS --> DASH\n    CACHE --> CLAUDE\n    CACHE --> GPT\n    CACHE --> LOCAL\n    ROUTER --> CLAUDE\n    ROUTER --> GPT\n    ROUTER --> LOCAL",
+    "components": [
+      {
+        "name": "LLM Gateway",
+        "description": "Unified entry point handling routing, caching, failover, rate limiting",
+        "tech": "Custom Go service or Portkey/LiteLLM"
+      },
+      {
+        "name": "Agent Harness",
+        "description": "Runtime that manages agent lifecycle, tool execution, termination conditions",
+        "tech": "Python/TypeScript based on Claude Agent SDK patterns"
+      },
+      {
+        "name": "Self-Verification Module",
+        "description": "Rules-based and LLM-based output verification before completion",
+        "tech": "Integrated into harness, configurable per agent"
+      },
+      {
+        "name": "Eval Engine",
+        "description": "Automated evaluation against golden datasets, quality metrics, regression tests",
+        "tech": "DeepEval or custom, integrated with CI/CD"
+      },
+      {
+        "name": "Trace Collector",
+        "description": "Captures full execution traces including reasoning chains, tool calls, costs",
+        "tech": "Langfuse or Maxim integration"
+      }
+    ],
+    "data_flows": [
+      {"from": "Client", "to": "Gateway", "data": "Agent request with context"},
+      {"from": "Gateway", "to": "Cache", "data": "Check for semantic cache hit"},
+      {"from": "Gateway", "to": "Router", "data": "Route to appropriate model based on complexity"},
+      {"from": "Harness", "to": "Sandbox", "data": "Isolated execution environment"},
+      {"from": "Harness", "to": "Verification", "data": "Output for validation"},
+      {"from": "All", "to": "Trace", "data": "Execution telemetry"}
+    ]
+  },
+
+  "roadmap_draft": {
+    "q1": [
+      {"milestone": "Agent Harness MVP", "description": "Core runtime with termination conditions, basic self-verification", "effort": "3 engineers, 6 weeks"},
+      {"milestone": "Eval Framework Foundation", "description": "Golden dataset infrastructure, basic quality metrics, CI integration", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Basic Observability", "description": "Trace collection, basic dashboards, alert framework", "effort": "2 engineers, 4 weeks"},
+      {"milestone": "LLM Gateway Alpha", "description": "Routing logic, basic caching, failover", "effort": "1 engineer, 6 weeks"}
+    ],
+    "q2": [
+      {"milestone": "Self-Verification V2", "description": "LLM-based verification, configurable rule sets, feedback loops", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Eval Platform Launch", "description": "Full regression suite, automated quality gates, developer dashboard", "effort": "3 engineers, 10 weeks"},
+      {"milestone": "Semantic Caching", "description": "Production semantic cache with similarity tuning", "effort": "2 engineers, 6 weeks"},
+      {"milestone": "SDK Release", "description": "Python and TypeScript SDKs with full harness integration", "effort": "2 engineers, 8 weeks"}
+    ],
+    "q3": [
+      {"milestone": "Multi-Agent Orchestration", "description": "Coordination patterns, shared state, handoff protocols", "effort": "3 engineers, 10 weeks"},
+      {"milestone": "Advanced Observability", "description": "Reasoning chain visualization, cost attribution, drift detection", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Simulation Testing", "description": "Pre-production scenario simulation, persona-based testing", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Enterprise Features", "description": "SSO, audit logs, compliance reporting", "effort": "2 engineers, 6 weeks"}
+    ],
+    "q4": [
+      {"milestone": "Scale & Optimize", "description": "Performance tuning, cost optimization, operational maturity", "effort": "3 engineers, 12 weeks"},
+      {"milestone": "Agent Marketplace", "description": "Reusable agent templates, community contributions", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Advanced Evals", "description": "Behavioral testing, adversarial robustness, safety suite", "effort": "2 engineers, 8 weeks"},
+      {"milestone": "Platform Hardening", "description": "Security audit, penetration testing, SOC2 prep", "effort": "2 engineers, 8 weeks"}
+    ]
+  },
+
+  "assumptions": [
+    {
+      "assumption": "Claude and GPT APIs remain stable and pricing competitive",
+      "confidence": "high",
+      "validation_method": "Monitor provider announcements, maintain multi-provider capability"
+    },
+    {
+      "assumption": "8 engineers sufficient for MVP in 3 months",
+      "confidence": "medium",
+      "validation_method": "Q1 velocity tracking, adjust scope if needed"
+    },
+    {
+      "assumption": "Semantic caching achieves claimed 60%+ hit rates on our workloads",
+      "confidence": "medium",
+      "validation_method": "Pilot with production traffic subset in Q1"
+    },
+    {
+      "assumption": "Self-verification adds < 20% latency overhead",
+      "confidence": "medium",
+      "validation_method": "Benchmark during MVP development"
+    },
+    {
+      "assumption": "Enterprise customers will pay premium for reliability",
+      "confidence": "high",
+      "validation_method": "Customer discovery interviews ongoing"
+    },
+    {
+      "assumption": "No major regulatory changes affecting AI agent deployment in next 12 months",
+      "confidence": "medium",
+      "validation_method": "Monitor EU AI Act implementation, US executive orders"
+    }
+  ]
+}
