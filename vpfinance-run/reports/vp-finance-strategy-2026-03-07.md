@@ -3,7 +3,8 @@
 > **Date**: March 7, 2026
 > **Period**: February 22 -- March 7, 2026
 > **Author**: VP Finance Agent (Claude Opus 4.6)
-> **Status**: Initial report -- based on VP Engineering strategy context and business analysis
+> **Status**: Initial report -- based on VP Engineering strategy context and portfolio analysis
+> **Revision**: R1 -- corrected to include full portfolio cost allocation and revenue analysis
 
 ---
 
@@ -11,14 +12,17 @@
 
 Enkai is a pre-revenue bootstrapped company with minimal burn, no debt, and two founders employed full-time elsewhere. This is an unusually strong financial position for a startup -- the founders can afford to be patient. But patience is not a strategy. The company needs to close its first paid deal to validate the business model, not just to generate revenue.
 
+The financial picture is more complex than "AWS costs ~$2K/month" suggests -- the company maintains **30+ repositories** across a portfolio of products, each consuming infrastructure resources. Understanding cost allocation per product is essential for pricing decisions.
+
 ```
  FINANCIAL SNAPSHOT                         KEY NUMBERS
  ──────────────────────────                 ─────────────────────
- Revenue (lifetime) ........ $0             Monthly burn: ~$2,000
+ Revenue (lifetime) ........ $0             Monthly burn: ~$2,000-2,400
  Cash reserves ............. Unknown         Runway: Indefinite (employed founders)
  Monthly burn (AWS) ........ ~$2,000         Break-even: 1 Pilot customer ($5K)
  Claude subscriptions ...... 2x Max 20x     Target: $20K/month by month 3-6
- Debt ...................... $0              Equity given: 50% of clearbreak to Andy
+ Products in portfolio ..... 30+ repos       Cost allocation unknown
+ Debt ...................... $0              Equity given: 50% of clearbreak
  External funding .......... $0
  Founder salaries .......... $0 from Enkai
 ```
@@ -39,20 +43,24 @@ Enkai is a pre-revenue bootstrapped company with minimal burn, no debt, and two 
 | **GitHub** | $0 | $0 | Free tier (public repos) or included |
 | **Total Monthly Burn** | **~$2,400** | **~$28,800** | |
 
-### 1.2 AWS Cost Breakdown (Estimated)
+### 1.2 AWS Cost Allocation by Product (Estimated)
 
-| Service | Est. Monthly | Optimization Opportunity |
-|---------|:-----------:|------------------------|
-| ECS Fargate | ~$800 | Already rightsized (4vCPU/8GB -> 2vCPU/4GB) |
-| RDS/DynamoDB | ~$300 | Review provisioned capacity |
-| S3 | ~$50 | Minimal |
-| Route53 + CloudFront | ~$50 | Minimal |
-| Other (SQS, Secrets, IAM, logging) | ~$200 | Review logging retention |
-| NAT Gateway | ~$100 | Consider VPC endpoints |
-| Data Transfer | ~$200 | Monitor |
-| CDK/CloudFormation overhead | ~$300 | 30 stacks -- consolidate unused |
+This is the critical view that was missing. The $2,000/month AWS bill supports the entire portfolio:
 
-**Action**: Request detailed AWS Cost Explorer export to validate these estimates and identify top cost drivers.
+| Product/Service | Est. Monthly AWS Cost | Resources Used | Can Be Reduced? |
+|----------------|:--------------------:|---------------|:---------------:|
+| **enkai platform** | ~$600 | ECS (builder, issue-manager), SQS, DynamoDB | Partially -- issue-manager already disabled |
+| **enkai-infra** | ~$300 | CDK/CloudFormation overhead (30 stacks), IAM, Secrets Manager | Yes -- consolidate unused stacks |
+| **frank** | ~$400 | ECS Fargate containers (rightsized to 2vCPU/4GB) | Already optimized |
+| **enkai-qualify** | ~$200 | ECS, S3, Cognito, health endpoints | Minimal |
+| **clearbreak** | ~$150 | ECS, RDS/Prisma, auth | Scale with usage |
+| **Shared infrastructure** | ~$250 | VPC, NAT Gateway, Route53, CloudFront, logging | NAT Gateway + logging have savings potential |
+| **Other portfolio** | ~$100 | bankan, ja9, mockery (if hosted) | Review if any are running idle |
+| **Total** | **~$2,000** | | |
+
+**Key finding**: The enkai platform core (enkai + frank) accounts for ~$1,000/month -- half the total AWS bill. This is the cost of goods sold (COGS) for the managed AI development service. Everything else is either product development cost or can be attributed to specific portfolio products.
+
+**Action**: Request detailed AWS Cost Explorer export with resource tagging to validate these estimates. Consider implementing AWS cost allocation tags by product.
 
 ### 1.3 Hidden Costs
 
@@ -61,12 +69,15 @@ Enkai is a pre-revenue bootstrapped company with minimal burn, no debt, and two 
 | Founder time (opportunity cost) | $15-25K each | Both employed full-time; Enkai is evenings/weekends |
 | MacBook runner (electricity) | ~$20 | Negligible |
 | Potential API costs (future) | $500-2,000 | When Claude subscriptions hit limits |
+| Portfolio maintenance overhead | Unmeasured | 30+ repos consume AI agent time even when "idle" |
 
 ---
 
 ## 2. Revenue Model Analysis
 
-### 2.1 Stream A: Managed AI Development
+### 2.1 Stream A: Managed AI Development (Primary)
+
+Powered by the enkai platform (enkai-builder + frank + pedro):
 
 | Metric | Pilot | Growth | Scale |
 |--------|:-----:|:------:|:-----:|
@@ -77,11 +88,20 @@ Enkai is a pre-revenue bootstrapped company with minimal burn, no debt, and two 
 | **Min commitment** | 3 months | 3 months | Annual |
 | **Contract value (min)** | $10,500 | $21,000 | $240,000+ |
 
-**Margin analysis**: The managed AI development service has extraordinary gross margins because the "labor" is AI agents running on existing infrastructure. The marginal cost of serving a customer is primarily incremental AWS compute (~$200-400/month) and Claude API usage (~$200-600/month).
+**COGS breakdown per enterprise customer:**
 
-**Revenue recognition**: Monthly retainer, recognized monthly. Pre-payment discount opportunity for annual contracts.
+| Component | Cost | Notes |
+|-----------|:----:|-------|
+| frank container time | $150-300 | Dedicated ECS Fargate capacity |
+| Claude API usage (future) | $100-300 | Currently covered by subscription |
+| S3/DynamoDB (artifacts, state) | $10-20 | Minimal |
+| SQS (issue dispatch) | $5-10 | Minimal |
+| Data transfer | $20-50 | Depends on repo size |
+| **Total COGS per customer** | **$285-680** | |
 
-### 2.2 Stream B: enkai-qualify
+**Margin analysis**: The managed AI development service has extraordinary gross margins because the "labor" is AI agents running on existing infrastructure. The marginal cost of serving a customer is primarily incremental frank container time and Claude API usage.
+
+### 2.2 Stream B: enkai-qualify (Secondary)
 
 | Metric | Free | Builder | Pro | Team |
 |--------|:----:|:-------:|:---:|:----:|
@@ -89,7 +109,9 @@ Enkai is a pre-revenue bootstrapped company with minimal burn, no debt, and two 
 | **COGS per user** | ~$2 | ~$5 | ~$10 | ~$15 |
 | **Gross margin** | N/A | **83%** | **87%** | **92%** |
 
-**Unit economics**: At 50 paid subscribers averaging $40/month, qualify generates $2,000/month with ~$500 COGS = $1,500 gross profit.
+**Infrastructure cost**: qualify runs on ~$200/month AWS regardless of user count (up to ~100 users). Beyond that, scaling costs are primarily Claude API for research generation.
+
+**Revenue significance**: At 50 paid subscribers averaging $40/month, qualify generates $2,000/month with ~$500 COGS = $1,500 gross profit. Material revenue requires 200+ subscribers.
 
 ### 2.3 Stream C: clearbreak (Partner)
 
@@ -98,10 +120,23 @@ Enkai is a pre-revenue bootstrapped company with minimal burn, no debt, and two 
 | Equity split | 50% Enkai / 50% Andy |
 | Revenue model | TBD (subscription likely) |
 | Enkai's role | Development + hosting |
-| Hosting cost to Enkai | ~$100-200/month |
+| Hosting cost to Enkai | ~$150/month (ECS + RDS) |
 | Revenue potential | Unknown -- needs market validation |
 
 **Concern**: 50% equity for a project where Enkai does 100% of the development is generous. This is acceptable for customer #1 (case study value) but should not be the template for future partnerships.
+
+### 2.4 Stream D: Portfolio Products (Future Potential)
+
+Products built by the platform that could generate revenue in the future:
+
+| Product | Revenue Model Options | Current Cost | Revenue Potential |
+|---------|----------------------|:----------:|:-----------------:|
+| **bankan** | Freemium SaaS kanban | ~$50/month | Low-medium (crowded market) |
+| **ja9** | Premium journal app | ~$30/month | Low (crowded market) |
+| **mockery** | Design tool subscription | ~$30/month | Medium (niche) |
+| **brandassador** | Brand management SaaS | ~$30/month | Medium (niche, 18 features planned) |
+
+**Recommendation**: These are not revenue priorities. Their value is as platform proof points and internal tools. Don't invest in monetization until core revenue is established.
 
 ---
 
@@ -122,7 +157,9 @@ Enkai is a pre-revenue bootstrapped company with minimal burn, no debt, and two 
  TOTAL REVENUE              $0     $3,500    $3,700    $7,400   $11,800   $12,200
 
  COSTS
- AWS Infrastructure      $2,000    $2,200    $2,400    $2,600    $2,800    $3,000
+ Platform (enkai+frank)  $1,000    $1,200    $1,400    $1,600    $1,800    $2,000
+ Portfolio products        $500      $500      $500      $500      $500      $500
+ Shared infra              $500      $500      $500      $500      $500      $500
  Claude (subs -> API)      $400      $400      $400      $600      $800    $1,000
  Stripe fees (2.9%+30c)     $0       $105      $110      $220      $350      $360
  Domain + misc              $10       $10       $10       $10       $10       $10
@@ -185,15 +222,18 @@ Even the pessimistic scenario is survivable because founders have day jobs. But 
 
 **Concern**: $29-199/month is standard SaaS pricing but requires significant volume to be meaningful revenue.
 
-| Subscribers needed for | Monthly Revenue |
-|-----------------------|:--------------:|
-| Break-even on qualify costs | 20 @ avg $50 = $1,000 |
-| Meaningful contribution | 100 @ avg $50 = $5,000 |
-| Material revenue | 500 @ avg $50 = $25,000 |
+**Recommendation**: Don't optimize qualify pricing yet. Keep it simple, keep the free tier generous, and focus on whether the qualify-to-managed-dev funnel converts. Qualify's strategic value as a lead funnel may exceed its direct subscription revenue.
 
-**Recommendation**: Don't optimize qualify pricing yet. Keep it simple, keep the free tier generous, and focus on whether the product-to-managed-dev funnel converts.
+### 4.3 Portfolio Product Monetization
 
-### 4.3 Contract Terms
+Not recommended at this stage. The portfolio products (bankan, ja9, mockery, brandassador) serve as:
+1. Proof of platform capability (marketing value)
+2. Internal productivity tools
+3. Test beds for the enkai platform
+
+Monetization would distract from the core enterprise revenue motion.
+
+### 4.4 Contract Terms
 
 | Term | Recommendation | Rationale |
 |------|---------------|-----------|
@@ -218,19 +258,20 @@ Even the pessimistic scenario is survivable because founders have day jobs. But 
 | HST/GST registration | Unknown | Required in Canada if revenue >$30K/year |
 | Corporate tax filing | Unknown | Confirm fiscal year and filing status |
 | Invoicing process | None | Stripe auto-invoicing recommended |
+| AWS cost allocation tags | Not set up | Tag resources by product for cost tracking |
 
 ### 5.2 Expense Tracking
 
-At current scale, expense tracking is simple:
+At current scale, expense tracking is simple but should be organized by product:
 
-| Category | How to Track |
-|----------|-------------|
-| AWS | Monthly bill (single account) |
-| Claude | Subscription receipts |
-| Domain | Annual receipt |
-| Everything else | Founders to submit receipts monthly |
+| Category | How to Track | Allocation |
+|----------|-------------|-----------|
+| AWS | Monthly bill with cost allocation tags | By product |
+| Claude | Subscription receipts | Shared across platform |
+| Domain | Annual receipt | Corporate |
+| Everything else | Founders to submit receipts monthly | Corporate |
 
-**Recommendation**: Set up a simple spreadsheet or QuickBooks tracking NOW, before revenue starts. Retroactive bookkeeping is painful.
+**Recommendation**: Set up AWS cost allocation tags NOW. Tag resources with `product: enkai`, `product: qualify`, `product: clearbreak`, `product: bankan`, etc. This will give accurate per-product cost data within 30 days.
 
 ### 5.3 Tax Considerations (Canada)
 
@@ -241,36 +282,36 @@ At current scale, expense tracking is simple:
 | **CCPC benefits** | Canadian-Controlled Private Corporation: small business deduction on first $500K of active business income (9% federal rate vs. 15%). |
 | **Founder compensation** | When revenue supports it, salary vs. dividend optimization. Consult accountant. |
 
-**SR&ED is significant**: If Enkai qualifies, the R&D tax credit could recover $10-20K+ in AWS and development costs retroactively. This should be explored with an SR&ED specialist.
+**SR&ED is significant**: If Enkai qualifies, the R&D tax credit could recover $10-20K+ in AWS and development costs retroactively. The entire portfolio of 30+ repos built by AI agents is potentially eligible R&D activity. This should be explored with an SR&ED specialist.
 
 ---
 
 ## 6. AWS Cost Optimization
 
-### 6.1 Immediate Opportunities
+### 6.1 Portfolio-Level Optimization
 
-| Opportunity | Est. Monthly Savings | Effort |
-|-------------|:-------------------:|:------:|
-| Reserved Instances (1-year) for stable workloads | $200-400 | Low |
-| Review and terminate unused stacks (30 CDK stacks) | $100-300 | Medium |
-| S3 lifecycle policies (move old data to IA/Glacier) | $20-50 | Low |
-| Review NAT Gateway usage (VPC endpoints cheaper) | $50-100 | Medium |
-| Consolidate logging (reduce retention to 30 days) | $30-50 | Low |
-| **Total potential savings** | **$400-900** | |
+| Opportunity | Est. Monthly Savings | Effort | Products Affected |
+|-------------|:-------------------:|:------:|-------------------|
+| Terminate unused CDK stacks from 30-stack set | $100-300 | Medium | enkai-infra |
+| Stop hosting idle portfolio products | $50-150 | Low | bankan, ja9, mockery (if running) |
+| Reserved Instances for stable workloads | $200-400 | Low | frank, enkai platform |
+| S3 lifecycle policies | $20-50 | Low | All products |
+| NAT Gateway -> VPC endpoints | $50-100 | Medium | Shared infra |
+| Consolidate logging (30-day retention) | $30-50 | Low | All products |
+| **Total potential savings** | **$450-1,050** | | |
 
-### 6.2 Scaling Costs
+### 6.2 Scaling Costs per Enterprise Customer
 
-As enterprise customers are added, costs scale with:
+| Per Customer Component | Monthly Cost | Platform Component |
+|-----------------------|:-----------:|-------------------|
+| frank container time | $150-300 | ECS Fargate |
+| Claude API (post-migration) | $100-300 | API billing |
+| enkai-builder compute | $50-100 | ECS + SQS |
+| S3 storage (repos, artifacts) | $10-20 | S3 |
+| Data transfer | $20-50 | EC2/ECS |
+| **Total per customer** | **$330-770** | |
 
-| Per Customer | Incremental Monthly Cost |
-|-------------|:-----------------------:|
-| ECS compute (frank container time) | $150-300 |
-| Claude API (when migrated from subscription) | $100-300 |
-| S3 storage (repos, artifacts) | $10-20 |
-| Data transfer | $20-50 |
-| **Total per customer** | **$280-670** |
-
-At $5,000/month per Pilot customer, COGS of $280-670 = **87-94% gross margin**.
+At $5,000/month per Pilot customer, COGS of $330-770 = **85-93% gross margin**.
 
 ### 6.3 Claude Subscription vs. API Migration
 
@@ -279,9 +320,10 @@ At $5,000/month per Pilot customer, COGS of $280-670 = **87-94% gross margin**.
 | Monthly cost | ~$400 | Variable ($500-2,000+) |
 | Capacity | Limited (rate limits) | Unlimited |
 | Scalability | Ceiling at ~3 customers | Scales with revenue |
-| Break-even point | N/A | ~3 concurrent customers |
+| Portfolio support | Covers all 30+ repos | Per-token across all repos |
+| Break-even point | N/A | ~3 concurrent enterprise customers |
 
-**Recommendation**: Stay on subscriptions until revenue from 3+ enterprise customers funds the API migration. Budget $1,000-2,000/month for API costs when transitioning.
+**Recommendation**: Stay on subscriptions until revenue from 3+ enterprise customers funds the API migration. The subscriptions currently support the entire 30+ repo portfolio -- API migration must account for ALL portfolio usage, not just enterprise customer work.
 
 ---
 
@@ -290,15 +332,17 @@ At $5,000/month per Pilot customer, COGS of $280-670 = **87-94% gross margin**.
 ### 7.1 Current Position: Bootstrap
 
 **Advantages**:
-- 100% equity retained
+- 100% equity retained (except 50% of clearbreak)
 - No board obligations
 - No growth pressure from investors
 - Founders maintain full control
+- Portfolio proves capability without external validation
 
 **Disadvantages**:
 - Growth limited by founder time
 - No cash cushion for aggressive hiring
 - Can't invest heavily in sales/marketing
+- 30+ repo portfolio is high maintenance for 2 people
 
 ### 7.2 Should You Raise?
 
@@ -316,13 +360,13 @@ At $5,000/month per Pilot customer, COGS of $280-670 = **87-94% gross margin**.
 
 | Source | Amount | Fit |
 |--------|--------|-----|
-| **SR&ED tax credits** | $10-20K retroactive | Excellent -- free money for R&D |
+| **SR&ED tax credits** | $10-20K retroactive | Excellent -- 30+ repos of AI R&D is strong evidence |
 | **IRAP (NRC)** | Up to $50K | Good -- non-repayable for Canadian tech SMEs |
 | **BDC loans** | $50-250K | Moderate -- low interest but still debt |
 | **Angel investors** | $50-200K | Only if validated (see above) |
 | **Revenue-based financing** | Based on MRR | Only at $10K+ MRR |
 
-**Priority**: Apply for SR&ED and explore IRAP. Both are non-dilutive.
+**Priority**: Apply for SR&ED and explore IRAP. Both are non-dilutive. The 30+ repo portfolio with 500+ weekly commits is compelling evidence for SR&ED eligibility.
 
 ---
 
@@ -343,9 +387,10 @@ At $5,000/month per Pilot customer, COGS of $280-670 = **87-94% gross margin**.
 
 | MRR | Decision to Make |
 |:---:|-----------------|
-| $10K | Register for HST/GST. Set up proper accounting. |
-| $15K | Start founder compensation (modest). Engage accountant. |
-| $20K | Evaluate: quit one day job? Hire contractor? |
+| $5K | Set up AWS cost allocation tags. Start per-product cost tracking. |
+| $10K | Register for HST/GST. Set up proper accounting. Review portfolio: which products earn their hosting costs? |
+| $15K | Start founder compensation (modest). Engage accountant. SR&ED filing. |
+| $20K | Evaluate: quit one day job? Hire contractor? Review portfolio pruning. |
 | $30K | Evaluate: both founders full-time? First employee? |
 | $50K | Evaluate: raise growth capital? Or stay bootstrapped? |
 
@@ -356,13 +401,15 @@ At $5,000/month per Pilot customer, COGS of $280-670 = **87-94% gross margin**.
 | Risk | L | I | Mitigation |
 |------|:-:|:-:|------------|
 | No revenue in 90 days | M | H | Jordan sends proposals THIS WEEK. Founding discount creates urgency. |
-| AWS costs spike unexpectedly | M | M | Set up billing alerts at $3K and $5K thresholds |
+| AWS costs spike with enterprise customers | M | M | Set billing alerts at $3K and $5K. Cost allocation tags to identify source. |
+| Portfolio hosting costs grow unchecked | M | M | Review per-product costs monthly. Shut down idle products. |
 | Enterprise customer doesn't pay on time | M | M | Net 15 terms. Stripe auto-billing. Follow up immediately. |
-| Claude pricing changes | M | M | Budget for API transition. Multi-model support as hedge. |
+| Claude pricing changes | M | M | Budget for API transition. API costs must cover full portfolio usage. |
 | Tax compliance issues | L | M | Engage accountant before first invoice. Register HST proactively. |
 | 50% clearbreak equity sets bad precedent | M | M | Document this as founding-partner exception. Future deals: 80/20 or fee-based. |
 | Founders burn out before revenue | M | H | First deal is a motivation milestone. Celebrate it. |
-| SR&ED claim rejected | M | L | Low risk -- AI development clearly qualifies. Keep documentation. |
+| SR&ED claim rejected | L | L | Low risk -- 30+ repos of AI development clearly qualifies. Keep documentation. |
+| 30 CDK stacks create unexpected costs | M | M | Audit and consolidate. Terminate unused stacks. |
 
 ---
 
@@ -373,13 +420,14 @@ At $5,000/month per Pilot customer, COGS of $280-670 = **87-94% gross margin**.
 | 1 | Is there a separate business bank account? | Required for clean accounting |
 | 2 | What accounting software (if any) is in use? | Need to set up before first invoice |
 | 3 | What is the corporate fiscal year end? | Tax planning |
-| 4 | Have you explored SR&ED tax credits? | Could recover $10-20K+ |
+| 4 | Have you explored SR&ED tax credits? | 30+ repos of AI R&D could recover $10-20K+ |
 | 5 | What are each founder's runway expectations? | Determines urgency of revenue |
 | 6 | At what MRR would you consider going full-time? | Determines financial targets |
 | 7 | Is the founding discount (30%) approved by both founders? | Affects first-deal economics |
 | 8 | How is the 50/50 clearbreak equity documented? | Needs formal agreement |
-| 9 | What are the actual AWS costs? (Need Cost Explorer export) | My estimates need validation |
-| 10 | Are there any other expenses not listed? | Complete picture needed |
+| 9 | What are the actual AWS costs? (Need Cost Explorer export) | My per-product estimates need validation |
+| 10 | Are any portfolio products running idle but costing money? | Quick savings opportunity |
+| 11 | Which of the 30 CDK stacks are actually in use? | Consolidation savings |
 
 ---
 
@@ -388,23 +436,26 @@ At $5,000/month per Pilot customer, COGS of $280-670 = **87-94% gross margin**.
 ```
  1. Actual AWS bill for the last 3 months
     -> My estimates need validation. Cost Explorer CSV preferred.
+    -> Ideally with resource-level breakdown for cost allocation.
 
- 2. Confirm business bank account exists
+ 2. Set up AWS cost allocation tags by product
+    -> Tag: product=enkai, product=qualify, product=clearbreak, etc.
+    -> This gives accurate per-product costs within 30 days.
+
+ 3. Confirm business bank account exists
     -> If not, set one up before first invoice
 
- 3. Confirm: is an accountant engaged?
+ 4. Confirm: is an accountant engaged?
     -> If not, find one who knows SR&ED. Budget $2-3K/year.
+    -> 30+ repos of AI development is a strong SR&ED case.
 
- 4. Each founder's "magic number" -- what MRR makes this feel real?
+ 5. Each founder's "magic number" -- what MRR makes this feel real?
     -> Financial planning needs emotional targets, not just math
 
- 5. Want me to build a financial model spreadsheet?
-    -> I can create a live model with scenarios and sensitivity analysis
-
- 6. Explore SR&ED with an accountant
-    -> This is potentially $10-20K in recovered costs. Don't leave it on the table.
+ 6. List which portfolio products are currently hosted (costing money)
+    -> Quick win: shut down anything not being used or demo'd
 ```
 
 ---
 
-<sub>Report generated by VP Finance Agent (Claude Opus 4.6) | Session: vpfinance-20260307</sub>
+<sub>Report generated by VP Finance Agent (Claude Opus 4.6) | Session: vpfinance-20260307 | R1</sub>

@@ -3,111 +3,210 @@
 > **Date**: March 7, 2026
 > **Period**: February 22 -- March 7, 2026
 > **Author**: VP Product Agent (Claude Opus 4.6)
-> **Status**: Initial report -- based on VP Engineering strategy context and business analysis
+> **Status**: Initial report -- based on VP Engineering strategy context and portfolio analysis
+> **Revision**: R1 -- corrected to center on enkai platform and full product portfolio
 
 ---
 
 ## Executive Summary
 
-Enkai has two products approaching market but neither has a defined product strategy. The managed AI development service is being sold conversationally without a product spec. enkai-qualify has 501 commits but no public launch plan. The platform works -- 30+ repos prove it -- but "it works for us" is not a product strategy.
+Enkai is a **platform company** with a 30+ repo product portfolio, but the platform itself lacks product definition. The enkai platform -- a 6-repo core (enkai, enkai-builder, enkai-issue-manager, enkai-infra, enkai-monitor, enkai-nextjs-template) powered by frank (agent runtime) and pedro (skills framework) -- is being sold conversationally as "managed AI development" without a product spec. Meanwhile, the portfolio it has built (clearbreak, bankan, ja9, mockery, brandassador, qualify) demonstrates its capability but isn't being leveraged strategically.
 
 ```
  THE SITUATION                              THE RECOMMENDATION
  ──────────────────────────                 ─────────────────────
- Products ................. 2 (+ 1 partner)  Define MVP scope for each NOW
- Product specs ............ None formal       Write 1-pagers before selling
- User research ............ 4 conversations   Structure these into discovery
- Onboarding flow .......... None              Design 48-hour time-to-value
- Feature prioritization ... Ad hoc            Ruthless: revenue-blocking only
- Product-market fit ....... Unvalidated       First pilot IS the validation
+ Core platform (enkai) ..... Works, no spec  Define MVP product boundaries NOW
+ Portfolio products ........ 30+ repos       Categorize, prioritize, leverage
+ User research ............. 4 conversations  Structure these into discovery
+ Onboarding flow ........... None             Design 48-hour time-to-value
+ Feature prioritization .... Ad hoc           Revenue-blocking only
+ Product-market fit ........ Unvalidated      First pilot IS the validation
 ```
 
-**Core insight**: You're selling before you've defined what you're selling. That works for deal #1. It won't work for deal #5. Define the product boundaries now while the team is small enough to align quickly.
+**Core insight**: The platform works -- it built itself and 30+ other products. But "it works for us" is not a product strategy. Define what enterprise customers get, what they don't, and what the product boundaries are.
 
 ---
 
 ## 1. Product Portfolio
 
-### 1.1 Product Map
+### 1.1 Full Portfolio Map
 
 ```mermaid
 graph TB
-    subgraph "Revenue Products"
-        A["Managed AI Dev<br/>(Stream A)"]
-        B["enkai-qualify<br/>(Stream B)"]
-        C["clearbreak<br/>(Partner)"]
+    subgraph "CORE PLATFORM (enkai)"
+        direction TB
+        E["enkai<br/>Planning UI + CLI<br/>Double Diamond"]
+        EB["enkai-builder<br/>Code Generation<br/>PR Creation"]
+        EIM["enkai-issue-manager<br/>Issue Analysis<br/>Decomposition"]
+        EI["enkai-infra<br/>30 CDK Stacks<br/>AWS Infrastructure"]
+        EM["enkai-monitor<br/>Dashboard"]
+        ENT["enkai-nextjs-template<br/>Scaffolding"]
     end
 
-    subgraph "Platform (Internal)"
-        D["frank<br/>Agent Runtime"]
-        E["pedro<br/>Skills Framework"]
-        F["enkai<br/>Planning UI"]
-        G["enkai-infra<br/>AWS Infrastructure"]
+    subgraph "AGENT RUNTIME"
+        F["frank<br/>ECS Container Runtime<br/>Go + TS + Python"]
+        P["pedro<br/>30+ Skills Framework<br/>Python"]
     end
 
-    subgraph "Internal Tools"
-        H["bankan"]
-        I["mockery"]
-        J["vp"]
+    subgraph "DEV TOOLS"
+        M["metis<br/>Code Analysis Toolkit<br/>TS + Python"]
+        TF["template-factory<br/>Project Scaffolding"]
     end
 
-    A -->|"powered by"| D
-    A -->|"powered by"| E
-    A -->|"powered by"| F
-    B -->|"feeds into"| A
-    C -->|"delivered via"| D
+    subgraph "PRODUCTS BUILT BY PLATFORM"
+        EQ["enkai-qualify<br/>SaaS Idea Validator"]
+        CB["clearbreak<br/>Mortgage Calculator"]
+        BK["bankan<br/>Kanban Board"]
+        J9["ja9<br/>Journal App"]
+        MK["mockery<br/>Design Mocking"]
+        BA["brandassador<br/>Brand Management"]
+    end
 
-    style A fill:#10b981,stroke:#059669,color:#fff
-    style B fill:#f59e0b,stroke:#d97706,color:#000
-    style C fill:#3b82f6,stroke:#2563eb,color:#fff
+    subgraph "ON HOLD"
+        JN["janus (empty)"]
+        ER["enkai-relay"]
+    end
+
+    EIM -->|"SQS"| EB
+    EB -->|"PRs"| E
+    E -->|"deploys via"| EI
+    F -->|"runs"| EB
+    P -->|"skills to"| F
+    TF -->|"scaffolds"| EQ
+    TF -->|"scaffolds"| CB
+
+    style E fill:#10b981,stroke:#059669,color:#fff
+    style EB fill:#10b981,stroke:#059669,color:#fff
+    style EIM fill:#10b981,stroke:#059669,color:#fff
+    style EI fill:#10b981,stroke:#059669,color:#fff
+    style F fill:#3b82f6,stroke:#2563eb,color:#fff
+    style P fill:#3b82f6,stroke:#2563eb,color:#fff
+    style EQ fill:#f59e0b,stroke:#d97706,color:#000
+    style CB fill:#f59e0b,stroke:#d97706,color:#000
 ```
 
-### 1.2 Product Status Assessment
+### 1.2 Portfolio Status Assessment
 
-| Product | Maturity | PMF Signal | Revenue Potential | Priority |
-|---------|----------|-----------|-------------------|----------|
-| **Managed AI Dev** | Service-ready, no product wrapping | 2 groups ready to buy | $10-20K/month | P0 |
-| **enkai-qualify** | 501 commits, near-launch | Unvalidated | $2-5K/month (long-term) | P1 |
-| **clearbreak** | Active dev, 32 commits | Partner validation | $1-2K/month | P1 |
+#### Core Platform
+
+| Component | Role | Status | Product Maturity |
+|-----------|------|--------|-----------------|
+| **enkai** | Planning UI, CLI, double diamond, schemas, Slack integration | Active (core) | Internal-quality -- needs enterprise hardening |
+| **enkai-builder** | Code generation, PR creation, Bedrock AgentCore | Production | Core engine -- 6.3MB Python, 9+ JSON schemas |
+| **enkai-issue-manager** | Issue analysis, decomposition, SQS dispatch | Production | Functional but disabled for cost reduction |
+| **enkai-infra** | 30 CDK stacks (VPC, ECS, DynamoDB, SQS, S3, etc.) | Active consolidation | Mature infrastructure layer |
+| **enkai-monitor** | Platform health dashboard | Stale (since Jan 30) | Needs assessment -- may need restart or replacement |
+| **enkai-nextjs-template** | Starter template for new projects | Stable (5KB) | Minimal but functional |
+
+#### Agent Runtime
+
+| Component | Role | Status | Product Maturity |
+|-----------|------|--------|-----------------|
+| **frank** | ECS Fargate container runtime for AI agents, web UI, worktree isolation | Production | Multi-language (Go+TS+Python), recently rightsized |
+| **pedro** | 30+ reusable agent skills | Production | Clean Python, consumed by frank at startup |
+
+#### Dev Tools
+
+| Component | Role | Status | Product Maturity |
+|-----------|------|--------|-----------------|
+| **metis** | AI-powered code analysis and quality checking | Active | Largest supporting repo (64MB) |
+| **template-factory** | Project scaffolding from templates | Stable | Built on Pedro framework |
+
+#### Products Built by Platform
+
+| Product | Description | Status | Revenue Potential |
+|---------|------------|--------|-------------------|
+| **enkai-qualify** | SaaS idea validator with context pack generation | Near launch (501 commits) | $2-5K/month (SaaS) + lead funnel |
+| **clearbreak** | Mortgage calculator (50% equity with Andy) | Active (32 commits, 8 pages) | $1-2K/month |
+| **bankan** | Kanban board with teams, consolidated view | Active | Internal tool / demo asset |
+| **ja9** | Journal app with entry management, mobile layout | Active | Internal tool / demo asset |
+| **mockery** | Visual design mocking (6 page mockups) | Early | Internal tool / demo asset |
+| **brandassador** | Brand management tooling | Backlog (18 open issues) | Internal tool |
+
+#### On Hold
+
+| Product | Reason |
+|---------|--------|
+| **janus** | Deployment orchestration -- planned but empty repo |
+| **enkai-relay** | Agent social network -- maintenance mode |
+| **enkai-builder (Bedrock)** | Bedrock pipeline not needed while frank+Claude works |
 
 ---
 
-## 2. Product #1: Managed AI Development
+## 2. The Core Product: enkai Platform
 
-### 2.1 Current State
+### 2.1 What the Platform Actually Does
 
-The "product" today is a capability, not a packaged offering. It works -- demonstrably -- but the customer experience is undefined:
+The enkai platform is a **complete AI software development pipeline**:
 
-- **No onboarding flow**: How does a customer go from "yes" to "first PR"?
-- **No dashboard**: Customers can't see what's happening with their issues
-- **No SLA definition**: What does "~20 issues/month" actually mean?
-- **No quality metrics**: How do customers measure if this is working?
-- **No feedback loop**: How do customers tell us something's wrong?
+```
+ GitHub Issue (tagged enkai:build)
+       |
+       v
+ enkai-issue-manager
+   - Analyzes issue requirements
+   - Decomposes into work items
+   - Dispatches via SQS
+       |
+       v
+ enkai-builder (via frank container)
+   - Receives job from SQS
+   - Loads pedro skills (30+)
+   - Analyzes codebase (Feature Atlas)
+   - Plans via double diamond methodology
+   - Writes code with tests (TDD)
+   - Runs quality gates (lint, type-check, build)
+   - Self-repairs on failure
+       |
+       v
+ Pull Request delivered to customer's repo
+   - Tests included
+   - Quality gates passed
+   - Architecture-aware
+   - Convention-following
+```
 
-### 2.2 MVP Product Definition
+### 2.2 Current State: Enterprise Readiness Gaps
+
+The platform works for internal use but has gaps for enterprise customers:
+
+| Gap | Current State | Needed for Enterprise |
+|-----|--------------|----------------------|
+| **Onboarding** | Manual setup, no guided flow | GitHub App install -> codebase analysis -> first PR in 48 hours |
+| **Visibility** | No customer-facing dashboard | Weekly summary email (minimum), dashboard (later) |
+| **SLA** | "~20 issues/month" undefined | Clear issue size/complexity definitions, response times |
+| **Quality metrics** | Internal only | Customer-facing quality dashboard showing PR acceptance rate, test coverage |
+| **Feedback loop** | None | In-PR comments, weekly sync, monthly review |
+| **Issue-manager** | Disabled for cost reduction | Needs re-enabling for enterprise customers |
+| **Monitor** | Stale since Jan 30 | Needs assessment -- restart or replace? |
+
+### 2.3 MVP Product Definition (Enterprise Pilot)
 
 **The minimum product for enterprise pilot**:
 
 | Component | Must Have (Pilot) | Nice to Have (Growth) |
 |-----------|------------------|----------------------|
 | **Onboarding** | GitHub App install, codebase analysis, Feature Atlas generation | Self-service setup wizard |
-| **Issue intake** | `enkai:build` label on GitHub issues | Priority labels, complexity estimates |
-| **PR delivery** | Tested, linted PRs with quality gates | Auto-merge option, deployment |
-| **Visibility** | Weekly email summary of work done | Real-time dashboard |
-| **Communication** | Weekly 30-min sync call | Slack integration, async updates |
+| **Issue intake** | `enkai:build` label on GitHub issues | Priority labels, complexity estimates, enkai-issue-manager auto-analysis |
+| **PR delivery** | Tested, linted PRs with quality gates via enkai-builder | Auto-merge option, deployment |
+| **Planning** | Double diamond for complex features via enkai CLI/UI | Customer access to planning UI |
+| **Visibility** | Weekly email summary of work done | enkai-monitor dashboard (customer-facing) |
+| **Communication** | Weekly 30-min sync call | Slack integration via enkai Slack module |
 | **Quality** | PR includes tests, passes CI | Coverage reports, quality trends |
-| **Feedback** | Email/Slack to report issues | In-PR feedback mechanism |
+| **Agent runtime** | frank containers running enkai-builder | Dedicated frank capacity per customer |
 
-### 2.3 Customer Journey (Pilot)
+### 2.4 Customer Journey (Pilot)
 
 ```
  DAY 0     Contract signed. GitHub App install link sent.
- DAY 1     Codebase analysis begins. Feature Atlas generated.
+ DAY 1     frank container spins up. Codebase analysis begins.
+           Feature Atlas generated. pedro skills loaded.
            Customer receives "Your Codebase Profile" document.
- DAY 2     First test issue processed. PR delivered.
+ DAY 2     First test issue processed via enkai-builder. PR delivered.
            Customer reviews and provides feedback on conventions.
- DAY 3-7   Calibration period. 3-5 issues processed with feedback loop.
-           Conventions, patterns, and preferences documented.
+ DAY 3-7   Calibration period. 3-5 issues processed.
+           enkai-builder learns conventions via Feature Atlas.
+           Patterns and preferences documented in pedro skills.
  DAY 7     First weekly sync. Review quality, adjust approach.
  DAY 8-30  Steady state. ~5 issues/week processed.
            Weekly syncs continue.
@@ -116,11 +215,11 @@ The "product" today is a capability, not a packaged offering. It works -- demons
  DAY 90    Pilot conclusion. Case study discussion. Growth tier offer.
 ```
 
-### 2.4 Success Metrics (Customer-Facing)
+### 2.5 Success Metrics (Customer-Facing)
 
 | Metric | Target | Measurement |
 |--------|--------|-------------|
-| Time to first PR | < 48 hours from setup | Tracked |
+| Time to first PR | < 48 hours from setup | Tracked via frank + enkai-builder |
 | PR acceptance rate | > 80% merged without major changes | GitHub data |
 | Issues processed per month | Per tier commitment | Tracked |
 | Customer satisfaction | > 8/10 at monthly review | Survey |
@@ -128,240 +227,254 @@ The "product" today is a capability, not a packaged offering. It works -- demons
 
 ---
 
-## 3. Product #2: enkai-qualify
+## 3. Portfolio Products
 
-### 3.1 Current State
+### 3.1 Revenue Products
 
-501 commits, dashboard built, S3 infrastructure, health endpoints. But no public users and no launch plan.
+#### enkai-qualify (Lead Funnel + SaaS Revenue)
 
-### 3.2 MVP Scope (Public Launch)
+| Item | Details |
+|------|---------|
+| **Role in portfolio** | Lead generation funnel for managed dev + standalone SaaS revenue |
+| **Status** | 501 commits, dashboard built, S3 infrastructure, health endpoints |
+| **MVP remaining** | Stripe billing, landing page, onboarding assessment |
+| **Priority** | P1 -- secondary to core platform enterprise readiness |
+| **Key decision** | Is qualify a funnel into managed dev, or a standalone product? |
 
-**In scope for launch**:
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Idea creation and editing | Built | Core flow |
-| AI-powered market research | Built | Using Claude |
-| Competitive analysis | Built | Automated |
-| Context pack generation | Built | Enkai format |
-| User auth and accounts | Built | Cognito |
-| S3 storage for packs | Built | Infrastructure ready |
-| Stripe billing | Not built | Required for paid tiers |
-| Landing page | Not built | Required for launch |
-| Onboarding flow | Unknown | Needs assessment |
-
-**Explicitly out of scope for launch**:
-- Multi-format pack export (just enkai format)
-- Team collaboration features
-- API access
-- Custom templates
-
-### 3.3 User Personas
-
-| Persona | Description | Job to Be Done | Tier |
-|---------|-------------|----------------|------|
-| **Indie Hacker Ian** | Solo founder, technical, wants to validate before building | "Help me figure out if this idea is worth building" | Free -> Builder |
-| **Product Manager Pat** | PM at company, evaluating new product lines | "Give me a structured analysis I can present to leadership" | Pro |
-| **Agency Owner Alex** | Runs dev shop, needs to scope client projects | "Help me research the market before quoting a project" | Pro -> Team |
-| **Non-technical Nina** | Has domain expertise, no coding skills | "I know the problem. Help me define the solution." | Builder |
-
-### 3.4 Qualify-to-Managed-Dev Funnel
-
-The strategic value of qualify isn't just subscription revenue -- it's a **lead generation funnel** for managed AI development:
-
+The qualify-to-managed-dev funnel:
 ```
- Free tier user validates idea
-       |
-       v
- Builder tier generates context pack
-       |
-       v
- "Want us to build this?" CTA
-       |
-       v
- Managed AI Development pilot ($5K/month)
+ Free tier user validates idea -> Builder tier generates context pack
+ -> "Want us to build this?" CTA -> Managed AI Development pilot ($5K/month)
 ```
 
-This funnel should be designed intentionally, not bolted on later.
+#### clearbreak (Partner Project)
+
+| Item | Details |
+|------|---------|
+| **Role in portfolio** | First external proof that the platform builds for others |
+| **Status** | 32 commits, 8 dashboard pages, security hardening, Prisma, auth |
+| **Equity** | 50% Enkai / 50% Andy |
+| **Priority** | P1 -- case study value is as important as revenue |
+| **Key decisions** | Revenue model, hosting arrangement, launch timeline |
+
+### 3.2 Internal Tools (Demo Assets + Internal Productivity)
+
+| Product | Status | Demo Value | Product Decision |
+|---------|--------|-----------|-----------------|
+| **bankan** | Active (teams, consolidated view, auth) | High -- tangible, relatable | Maintain for demos, don't invest heavily |
+| **ja9** | Active (entry management, mobile layout) | Medium -- shows mobile capability | Maintain for demos |
+| **mockery** | Early (6 page mockups) | Medium -- shows design capability | Maintain for demos |
+| **brandassador** | Backlog (18 open issues) | Low -- not demo-ready | Freeze until revenue |
+
+### 3.3 Platform Infrastructure (Not Customer-Facing, But Critical)
+
+| Product | Product Decision |
+|---------|-----------------|
+| **frank** | Keep investing -- this IS the agent runtime that powers enterprise delivery |
+| **pedro** | Keep investing -- skills quality directly impacts PR quality |
+| **enkai-infra** | Stabilize -- 30 CDK stacks need consolidation, but not a product blocker |
+| **metis** | Assess -- is this used actively or redundant with pedro skills? |
+| **template-factory** | Stable -- no investment needed |
+
+### 3.4 On Hold (Correct Decisions)
+
+| Product | Decision | Rationale |
+|---------|----------|-----------|
+| **janus** | Keep on hold | Deployment orchestration is nice-to-have, not revenue-blocking |
+| **enkai-relay** | Keep on hold | Agent social network -- interesting but not revenue-generating |
+| **enkai-builder (Bedrock)** | Keep on hold | frank+Claude works. Revisit when multi-model needed |
+| **enkai-issue-manager** | Re-evaluate | Was disabled for cost -- but may be needed for enterprise pilot |
 
 ---
 
-## 4. Product #3: clearbreak (Partner)
+## 4. Feature Prioritization Framework
 
-### 4.1 Current State
+### 4.1 The Rule
 
-Mortgage calculator with 32 commits, 8 dashboard pages, security hardening, Prisma, auth. 50% equity partnership with Andy.
+At pre-revenue, every feature decision answers one question: **Does this help the enkai platform close an enterprise deal?**
 
-### 4.2 Product Decisions Needed
+If no, it waits. Qualify, clearbreak, and internal tools all wait behind core platform enterprise readiness.
 
-| Decision | Options | Recommendation |
-|----------|---------|---------------|
-| Revenue model | Subscription / Lead gen / Freemium | Needs market research |
-| Hosting | Enkai-managed / Self-hosted | Enkai-managed (recurring revenue) |
-| Launch timeline | With qualify / Independent | Independent -- different market |
-| Feature scope | Calculator only / Full mortgage toolkit | Start with calculator, expand based on usage |
-
-### 4.3 clearbreak as Case Study
-
-Regardless of clearbreak's own revenue, it's the **first external proof point** for the managed AI development service. Every design decision, PR, and deployment should be documented as evidence.
-
----
-
-## 5. Feature Prioritization Framework
-
-### 5.1 The Rule
-
-At pre-revenue, every feature decision answers one question: **Does this help close an enterprise deal or launch qualify?**
-
-If no, it waits.
-
-### 5.2 Current Backlog Assessment
+### 4.2 Current Backlog Assessment
 
 | Item | Revenue Impact | Effort | Verdict |
 |------|---------------|--------|---------|
-| GitHub App onboarding flow | Direct -- enterprise needs this | Medium | DO NOW |
-| Weekly summary email | Direct -- customer visibility | Low | DO NOW |
-| Qualify Stripe billing | Direct -- can't charge without it | Medium | DO NOW |
-| Qualify landing page | Direct -- can't launch without it | Low | DO NOW |
-| enkai UI overhaul | Indirect | High | DEFER |
-| Multi-agent orchestration | None yet | Very High | DEFER |
-| Bankan improvements | None | Medium | DEFER |
-| Mockery features | None | Medium | DEFER |
-| brandassador (18 issues) | None | High | DEFER |
+| **Enkai platform onboarding flow** | Direct -- enterprise can't start without it | Medium | DO NOW |
+| **Re-enable enkai-issue-manager** | Direct -- auto-analyzes customer issues | Medium | ASSESS |
+| **Weekly summary email from platform** | Direct -- customer visibility | Low | DO NOW |
+| **enkai-monitor restart** | Direct -- customer dashboard (Growth tier) | Medium | ASSESS |
+| **Qualify Stripe billing** | Revenue-enabling (secondary stream) | Medium | DO SOON |
+| **Qualify landing page** | Revenue-enabling (secondary stream) | Low | DO SOON |
+| **enkai planning UI hardening** | Indirect -- demo asset for enterprise sales | Medium | DO SOON |
+| **frank dedicated capacity** | Enterprise -- per-customer container isolation | Medium | DO SOON |
+| **enkai UI overhaul** | Indirect | High | DEFER |
+| **Multi-agent orchestration** | None yet | Very High | DEFER |
+| **Bankan improvements** | None | Medium | DEFER |
+| **Mockery features** | None | Medium | DEFER |
+| **brandassador (18 issues)** | None | High | FREEZE |
+| **janus** | None | Very High | FREEZE |
 
-### 5.3 Feature Freeze
+### 4.3 Feature Freeze
 
-Recommend a **feature freeze on all internal tools** (bankan, mockery, brandassador, vp improvements) until first enterprise deal closes. Every AI agent cycle should go toward revenue-generating work.
+**Frozen** (no AI agent cycles until first enterprise deal closes):
+- brandassador (18 issues can wait)
+- janus (planned but not needed)
+- enkai-relay (maintenance mode, keep it there)
+- mockery (beyond current state)
+- ja9 (beyond current state)
+
+**Active maintenance only** (bugs, no new features):
+- bankan
+- metis
+- template-factory
 
 ---
 
-## 6. Product Principles
+## 5. Product Principles
 
-1. **Revenue before elegance**: Ugly that sells beats beautiful that doesn't
-2. **Manual before automated**: Do things manually for customer #1, automate for customer #5
-3. **GitHub-native**: Don't build UIs when GitHub already has one
-4. **Transparency**: Customers should always know what's happening with their issues
-5. **Time-to-value < 48 hours**: If a customer can't see value in 2 days, we've failed
-6. **Eat our own cooking**: Every feature we sell must be one we use ourselves
+1. **Platform first**: The enkai platform IS the product. Everything else is either powered by it or feeds into it.
+2. **Revenue before elegance**: Ugly that sells beats beautiful that doesn't
+3. **Manual before automated**: Do things manually for customer #1, automate for customer #5
+4. **GitHub-native**: Don't build UIs when GitHub already has one
+5. **Transparency**: Customers should always know what's happening with their issues
+6. **Time-to-value < 48 hours**: If a customer can't see value in 2 days, we've failed
+7. **Eat our own cooking**: Every feature we sell must be one we use on our own portfolio
 
 ---
 
-## 7. Competitive Product Analysis
+## 6. Competitive Product Analysis
 
-### 7.1 Feature Comparison
+### 6.1 Feature Comparison
 
-| Capability | Enkai | Cursor | Devin | Lovable | Dev Agency |
+| Capability | Enkai Platform | Cursor | Devin | Lovable | Dev Agency |
 |-----------|:-----:|:------:|:-----:|:-------:|:----------:|
 | Works in customer's repo | Yes | Yes | Yes | No | Sometimes |
-| Full test suite included | Yes | No | Partial | No | Sometimes |
-| CI/CD integration | Yes | No | No | No | Sometimes |
-| Codebase context awareness | Deep | File-level | Repo-level | None | Manual |
-| Design/planning phase | Yes | No | No | Yes | Yes |
+| Issue analysis + decomposition | Yes (issue-manager) | No | Partial | No | Manual |
+| Design/planning phase | Yes (double diamond) | No | No | Yes | Yes |
+| Full test suite included | Yes (enkai-builder TDD) | No | Partial | No | Sometimes |
+| CI/CD integration | Yes (5 GitHub Actions) | No | No | No | Sometimes |
+| Codebase context (Feature Atlas) | Deep | File-level | Repo-level | None | Manual |
+| Agent runtime isolation | Yes (frank/ECS) | N/A | Yes | N/A | N/A |
+| Reusable skills library | Yes (pedro, 30+) | No | No | No | No |
+| Infrastructure management | Yes (30 CDK stacks) | No | No | No | Manual |
 | Ongoing maintenance | Yes | No | No | No | Billable |
-| Human review required | Optional | Always | Sometimes | Always | Always |
+| Portfolio proof | 30+ repos | N/A | Demo only | Demo only | Client list |
 | Price for 20 features/month | $5K | $20/seat | ~$500 | $20/seat | $30-50K |
 
-### 7.2 Product Gaps to Close
+### 6.2 Product Gaps to Close
 
 | Gap | Competitor Advantage | Our Response | Timeline |
 |-----|---------------------|-------------|----------|
-| Real-time visibility | Cursor/Devin show work live | Weekly summary first, dashboard later | Q2 |
+| Real-time visibility | Cursor/Devin show work live | Weekly summary first, enkai-monitor dashboard later | Q2 |
 | Self-service onboarding | All competitors are self-service | Manual first, automate at customer #5 | Q3 |
-| Multi-language support | Cursor/Copilot support everything | Focus on TS/React/Next.js, expand later | Q2 |
-| Free trial | All competitors offer trials | Founding partner discount serves same purpose | N/A |
+| Multi-language support | Cursor/Copilot support everything | Focus on TS/React/Next.js (matches portfolio), expand later | Q2 |
+| Free trial | All competitors offer trials | Founding partner discount + clearbreak/bankan as demos | N/A |
 
 ---
 
-## 8. Roadmap
+## 7. Roadmap
 
-### 8.1 Next 30 Days (Revenue Sprint)
+### 7.1 Next 30 Days (Platform Revenue Sprint)
 
 ```
  WEEK 1
-   Define managed dev onboarding flow (GitHub App -> first PR)
+   Define enkai platform onboarding flow (GitHub App -> frank -> first PR)
+   Assess: re-enable enkai-issue-manager for enterprise?
+   Assess: restart enkai-monitor or build lightweight alternative?
    Draft "Codebase Profile" template for customer Day 1
-   Assess qualify readiness for Stripe integration
 
  WEEK 2
-   Build weekly summary email template
-   Define SLA language for pilot contract
-   Begin qualify Stripe integration
+   Build weekly summary email from enkai-builder output
+   Define SLA language for pilot contract (issue sizes, response times)
+   Begin qualify Stripe integration (secondary priority)
 
  WEEK 3
    Test onboarding flow with clearbreak as guinea pig
+   Verify frank can handle dedicated per-customer containers
    Qualify landing page copy and design
    Draft customer feedback survey template
 
  WEEK 4
-   Onboarding flow ready for first enterprise customer
+   Platform onboarding flow ready for first enterprise customer
    Qualify billing ready for beta testers
    All sales collateral reviewed and finalized
+   Portfolio demo curated (top 3-4 products selected)
 ```
 
-### 8.2 Days 30-90
+### 7.2 Days 30-90
 
 ```
  MONTH 2
-   Onboard first enterprise pilot
+   Onboard first enterprise pilot via enkai platform
+   frank dedicated container running for customer
+   enkai-builder processing customer issues
+   Weekly syncs, adjust pedro skills based on feedback
    Launch qualify to beta users (20 invites)
-   Iterate based on pilot feedback
-   Begin planning customer dashboard (for Growth tier)
 
  MONTH 3
    Second enterprise customer onboarding
-   Qualify public launch
    First monthly metrics review with pilot customer
+   Qualify public launch
    Case study with clearbreak
+   Assess: is enkai planning UI ready for customer access? (Growth tier feature)
 ```
 
 ---
 
-## 9. Risk Assessment
+## 8. Risk Assessment
 
 | Risk | L | I | Mitigation |
 |------|:-:|:-:|------------|
-| Enterprise expectations exceed capability | M | H | Define scope tightly in contract. Under-promise, over-deliver. |
-| Qualify launches to crickets | M | M | Pre-build waitlist. Product Hunt / HN launch strategy. |
+| Enterprise expectations exceed platform capability | M | H | Define scope tightly in contract. Under-promise, over-deliver. |
+| enkai-issue-manager re-enablement causes cost spike | M | M | Start with manual issue tagging. Re-enable only when revenue supports it. |
+| enkai-monitor too stale to restart | M | M | Assess first. May need lightweight replacement. |
+| frank can't isolate per-customer containers | L | H | Already supports worktree isolation. Test with clearbreak first. |
 | Clearbreak partnership misaligned on timeline | M | M | Set hard milestones with Andy. Monthly reviews. |
-| Feature creep delays everything | H | H | Feature freeze on internal tools. Jordan's "done > perfect" rule. |
+| Feature creep across 30+ repos | H | H | Feature freeze on non-revenue products. Enforce ruthlessly. |
 | No product feedback loop with customers | M | H | Weekly sync mandatory in pilot contract. Monthly survey. |
-| Multi-language requests from prospects | M | M | Be transparent: "We're best at TS/React/Next.js. Expanding in Q2." |
+| Portfolio products embarrass in demos | M | M | Curate top 3-4 only. Ensure they're clean before showing. |
 
 ---
 
-## 10. Open Questions for Founders
+## 9. Open Questions for Founders
 
 | # | Question | Why It Matters |
 |:-:|----------|---------------|
-| 1 | What does the GitHub App install experience look like today? | Determines onboarding timeline |
+| 1 | What does the enkai GitHub App install experience look like today? | Determines onboarding timeline |
 | 2 | How long does Feature Atlas generation take for a new repo? | Sets customer expectations for Day 1 |
-| 3 | What repo sizes/languages are the enterprise prospects using? | Determines technical readiness |
-| 4 | Is qualify's dashboard consumer-ready or internal-quality? | Determines launch prep effort |
-| 5 | What's Andy's timeline expectation for clearbreak? | Manages partner relationship |
-| 6 | Should qualify packs be exportable to non-Enkai formats? | Determines if qualify is a funnel or standalone product |
-| 7 | Are we ready to handle a customer whose CI we break? | Need incident response plan before pilot |
-| 8 | Who monitors PR quality -- us or the customer? | Defines the ongoing service model |
+| 3 | Why was enkai-issue-manager disabled? What's the cost to re-enable? | Key platform component -- need to decide if it's in the MVP |
+| 4 | What's the state of enkai-monitor? Salvageable or start fresh? | Customer dashboard is a Growth tier feature |
+| 5 | Can frank handle per-customer container isolation today? | Required for enterprise security |
+| 6 | What repo sizes/languages are the enterprise prospects using? | Determines platform readiness |
+| 7 | Which portfolio products are demo-ready right now? | Need to curate the portfolio showcase |
+| 8 | Is the enkai planning UI (double diamond) ready to show prospects? | Best demo asset if it's polished enough |
+| 9 | What's Andy's timeline expectation for clearbreak? | Manages partner relationship |
+| 10 | Should enkai-qualify be a funnel into managed dev, or standalone? | Determines product strategy for qualify |
 
 ---
 
-## 11. What I Need From You
+## 10. What I Need From You
 
 ```
- 1. Walk me through the GitHub App installation experience
-    -> I need to design the onboarding flow
+ 1. Walk me through the enkai platform pipeline end-to-end
+    -> I need to map: issue in -> issue-manager -> builder -> PR out
 
  2. Tell me the enterprise prospects' tech stacks
-    -> TS/React/Next.js? Python? Java? This determines readiness
+    -> TS/React/Next.js? Python? Java? This determines platform readiness
 
- 3. Define "~20 issues/month" more precisely
-    -> Size? Complexity? What counts as one issue?
+ 3. Explain why enkai-issue-manager was disabled
+    -> Need to decide: re-enable for enterprise, or manual intake?
 
- 4. Confirm the qualify launch target: 60 days from now?
-    -> I need to lock the scope and start the countdown
+ 4. Define "~20 issues/month" more precisely
+    -> Size? Complexity? What counts as one issue vs. an epic?
 
- 5. Should I draft the pilot SLA and onboarding docs?
+ 5. Which portfolio products can I see? (bankan, ja9, clearbreak, qualify)
+    -> Need to assess demo readiness across the portfolio
+
+ 6. Should I draft the pilot SLA and onboarding docs?
     -> These need to be ready before Jordan sends proposals
 ```
 
 ---
 
-<sub>Report generated by VP Product Agent (Claude Opus 4.6) | Session: vpproduct-20260307</sub>
+<sub>Report generated by VP Product Agent (Claude Opus 4.6) | Session: vpproduct-20260307 | R1</sub>
