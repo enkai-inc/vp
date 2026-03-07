@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enkai — Founding Partner Pilot Program</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1a1a2e;
+    line-height: 1.5;
+    font-size: 11px;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    padding: 0.4in 0.55in;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #f59e0b;
+    margin-bottom: 14px;
+  }
+
+  .logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span {
+    color: #f59e0b;
+  }
+
+  .header-subtitle {
+    font-size: 10px;
+    color: #64748b;
+    text-align: right;
+    max-width: 260px;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    padding: 16px 22px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .hero h1 span {
+    color: #f59e0b;
+  }
+
+  .hero p {
+    font-size: 11px;
+    color: #cbd5e1;
+    line-height: 1.5;
+  }
+
+  /* Section headers */
+  h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #f59e0b;
+    display: inline-block;
+  }
+
+  .section {
+    margin-bottom: 12px;
+  }
+
+  /* Two column layout */
+  .two-col {
+    display: flex;
+    gap: 20px;
+  }
+
+  .two-col > div {
+    flex: 1;
+  }
+
+  /* How it works */
+  .steps {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .step {
+    flex: 1;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 12px;
+    position: relative;
+  }
+
+  .step-number {
+    background: #f59e0b;
+    color: #1a1a2e;
+    font-weight: 700;
+    font-size: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .step-title {
+    font-weight: 600;
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
+
+  .step-desc {
+    font-size: 9px;
+    color: #64748b;
+    line-height: 1.4;
+  }
+
+  /* Pilot includes table */
+  .includes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .include-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 9.5px;
+    padding: 4px 7px;
+    background: #f8fafc;
+    border-radius: 4px;
+    border-left: 3px solid #10b981;
+  }
+
+  .include-item strong {
+    font-weight: 600;
+    min-width: 80px;
+    color: #1a1a2e;
+  }
+
+  .include-item span {
+    color: #475569;
+  }
+
+  /* Pricing table */
+  .pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 10px;
+  }
+
+  .pricing-table thead th {
+    background: #1a1a2e;
+    color: white;
+    padding: 8px 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 10px;
+  }
+
+  .pricing-table thead th:first-child {
+    text-align: left;
+    border-radius: 6px 0 0 0;
+  }
+
+  .pricing-table thead th:last-child {
+    border-radius: 0 6px 0 0;
+  }
+
+  .pricing-table thead th.recommended {
+    background: #f59e0b;
+    color: #1a1a2e;
+  }
+
+  .pricing-table tbody td {
+    padding: 4px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: center;
+  }
+
+  .pricing-table tbody td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: #334155;
+  }
+
+  .pricing-table .price-row td {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 12px;
+    color: #1a1a2e;
+  }
+
+  .pricing-table .price-row .original {
+    text-decoration: line-through;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 400;
+    display: block;
+  }
+
+  .founding-badge {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+
+  /* Differentiators */
+  .diff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .diff-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .diff-item h4 {
+    font-size: 10px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 3px;
+  }
+
+  .diff-item p {
+    font-size: 9px;
+    color: #64748b;
+    line-height: 1.4;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 0;
+    margin: 12px 0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .stat {
+    flex: 1;
+    text-align: center;
+    padding: 7px 8px;
+    background: #1a1a2e;
+    color: white;
+    border-right: 1px solid #2d3a5c;
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f59e0b;
+  }
+
+  .stat-label {
+    font-size: 8px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* CTA */
+  .cta {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    padding: 14px 22px;
+    border-radius: 8px;
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cta h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .cta p {
+    font-size: 10px;
+    color: #94a3b8;
+  }
+
+  .cta-button {
+    background: #f59e0b;
+    color: #1a1a2e;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 11px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: #94a3b8;
+  }
+
+  .check { color: #10b981; font-weight: 700; margin-right: 3px; }
+
+  /* Getting started steps */
+  .gs-steps {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .gs-step {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .gs-num {
+    background: #f59e0b;
+    color: #1a1a2e;
+    font-weight: 700;
+    font-size: 11px;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  .gs-text strong {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+
+  .gs-text span {
+    font-size: 9px;
+    color: #64748b;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">enk<span>ai</span></div>
+    <div class="header-subtitle">
+      Founding Partner Pilot Program<br>
+      <strong>Confidential</strong>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>AI-powered feature development that delivers <span>production-ready PRs</span> to your GitHub repo.</h1>
+    <p>Your team creates issues. Enkai plans, tests, and builds. Production-quality pull requests appear — automatically.</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-value">30+</div>
+      <div class="stat-label">Active Repos Maintained</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">10x</div>
+      <div class="stat-label">Faster Feature Delivery</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">100%</div>
+      <div class="stat-label">Test Coverage on Changes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">&lt;1hr</div>
+      <div class="stat-label">Idea to Pull Request</div>
+    </div>
+  </div>
+
+  <!-- Two column: What's Included + How It Works -->
+  <div class="two-col">
+    <div>
+      <div class="section">
+        <h2>What's Included in the Pilot</h2>
+        <div class="includes-grid">
+          <div class="include-item"><strong>Duration</strong> <span>3 months</span></div>
+          <div class="include-item"><strong>Scope</strong> <span>1 repo, ~20 issues/month</span></div>
+          <div class="include-item"><strong>Delivery</strong> <span>Production PRs with tests</span></div>
+          <div class="include-item"><strong>Merge policy</strong> <span>Your choice (configurable)</span></div>
+          <div class="include-item"><strong>Context</strong> <span>Full Feature Atlas analysis</span></div>
+          <div class="include-item"><strong>Design</strong> <span>Double diamond methodology</span></div>
+          <div class="include-item"><strong>Weekly sync</strong> <span>30-min progress review</span></div>
+          <div class="include-item"><strong>Support</strong> <span>Priority email, same-day</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section">
+        <h2>What Makes This Different</h2>
+        <div class="diff-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="diff-item">
+            <h4><span class="check">&#10003;</span> TDD Methodology</h4>
+            <p>Tests written first. Every PR ships with full test coverage.</p>
+          </div>
+          <div class="diff-item">
+            <h4><span class="check">&#10003;</span> Quality Gates</h4>
+            <p>Automated lint, type-check, and build. Self-repair on failure.</p>
+          </div>
+          <div class="diff-item">
+            <h4><span class="check">&#10003;</span> Deep Context</h4>
+            <p>Understands your architecture, patterns, and conventions.</p>
+          </div>
+          <div class="diff-item">
+            <h4><span class="check">&#10003;</span> Auditable</h4>
+            <p>Every decision traceable. Full reasoning chain visibility.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="section">
+    <h2>Founding Partner Pricing</h2>
+    <table class="pricing-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="recommended">Pilot</th>
+          <th>Growth</th>
+          <th>Scale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="price-row">
+          <td>Monthly</td>
+          <td><span class="original">$5,000</span><strong>$3,500</strong></td>
+          <td><span class="original">$10,000</span><strong>$7,000</strong></td>
+          <td><strong>Custom</strong></td>
+        </tr>
+        <tr>
+          <td>Repositories</td>
+          <td>1</td>
+          <td>3</td>
+          <td>Unlimited</td>
+        </tr>
+        <tr>
+          <td>Issues / month</td>
+          <td>~20</td>
+          <td>~50</td>
+          <td>Custom</td>
+        </tr>
+        <tr>
+          <td>Planning UI access</td>
+          <td>&#8212;</td>
+          <td><span class="check">&#10003;</span></td>
+          <td><span class="check">&#10003;</span></td>
+        </tr>
+        <tr>
+          <td>Dedicated builder capacity</td>
+          <td>&#8212;</td>
+          <td>&#8212;</td>
+          <td><span class="check">&#10003;</span></td>
+        </tr>
+        <tr>
+          <td>Commitment</td>
+          <td>3 months</td>
+          <td>3 months</td>
+          <td>Annual</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="founding-badge">FOUNDING PARTNER: 30% discount for the first 5 companies. Includes case study rights and quarterly feedback.</div>
+  </div>
+
+  <!-- Getting Started -->
+  <div class="section">
+    <h2>Getting Started</h2>
+    <div class="gs-steps">
+      <div class="gs-step">
+        <div class="gs-num">1</div>
+        <div class="gs-text">
+          <strong>Install</strong>
+          <span>Add the Enkai GitHub App to your organization. Takes 2 minutes.</span>
+        </div>
+      </div>
+      <div class="gs-step">
+        <div class="gs-num">2</div>
+        <div class="gs-text">
+          <strong>Connect</strong>
+          <span>Tell us which repo to start with and your merge preferences.</span>
+        </div>
+      </div>
+      <div class="gs-step">
+        <div class="gs-num">3</div>
+        <div class="gs-text">
+          <strong>Build</strong>
+          <span>Create an issue, tag it <code>enkai:build</code>, and watch the PR appear within 48 hours.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div>
+      <h3>Ready to ship faster?</h3>
+      <p>Contact us for a 15-minute walkthrough, or reply with your repo and we'll get started.</p>
+    </div>
+    <a href="mailto:jordan@enkai.ca" class="cta-button">Contact Jordan &rarr;</a>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Enkai Technologies Ltd. | enkai.ca | Vancouver, Canada</span>
+    <span>Currently optimized for Next.js, React, and TypeScript projects.</span>
+  </div>
+
+</div>
+</body>
+</html>
